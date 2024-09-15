@@ -1,0 +1,175 @@
+syntax = "proto3";
+
+option go_package = "github.com/fayleenpc/types_grpc";
+
+package types_grpc;
+
+// UserStore service
+service UserStore {
+  rpc GetUserByEmail(GetUserByEmailRequest) returns (UserResponse);
+  rpc GetUserByID(GetUserByIDRequest) returns (UserResponse);
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+  rpc UpdateVerifiedUserByEmail(UpdateVerifiedUserByEmailRequest) returns (UpdateVerifiedUserByEmailResponse);
+}
+
+// ProductStore service
+service ProductStore {
+  rpc GetProducts(GetProductsRequest) returns (GetProductsResponse);
+  rpc GetProductsByIDs(GetProductsByIDsRequest) returns (GetProductsResponse);
+  rpc CreateProduct(CreateProductRequest) returns (CreateProductResponse);
+  rpc UpdateProduct(UpdateProductRequest) returns (UpdateProductResponse);
+}
+
+// OrderStore service
+service OrderStore {
+  rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
+  rpc CreateOrderItem(CreateOrderItemRequest) returns (CreateOrderItemResponse);
+}
+
+// Messages for UserStore
+message GetUserByEmailRequest {
+  string email = 1;
+}
+
+message GetUserByIDRequest {
+  int32 id = 1;
+}
+
+message CreateUserRequest {
+  User user = 1;
+}
+
+message UpdateVerifiedUserByEmailRequest {
+  string email = 1;
+}
+
+message UserResponse {
+  User user = 1;
+  string error = 2;
+}
+
+message CreateUserResponse {
+  bool success = 1;
+  string error = 2;
+}
+
+message UpdateVerifiedUserByEmailResponse {
+  bool success = 1;
+  string error = 2;
+}
+
+// Messages for ProductStore
+message GetProductsRequest {}
+
+message GetProductsByIDsRequest {
+  repeated int32 ids = 1;
+}
+
+message GetProductsResponse {
+  repeated Product products = 1;
+  string error = 2;
+}
+
+message CreateProductRequest {
+  Product product = 1;
+}
+
+message CreateProductResponse {
+  int32 id = 1;
+  string error = 2;
+}
+
+message UpdateProductRequest {
+  Product product = 1;
+}
+
+message UpdateProductResponse {
+  bool success = 1;
+  string error = 2;
+}
+
+// Messages for OrderStore
+message CreateOrderRequest {
+  Order order = 1;
+}
+
+message CreateOrderResponse {
+  int32 id = 1;
+  string error = 2;
+}
+
+message CreateOrderItemRequest {
+  OrderItem order_item = 1;
+}
+
+message CreateOrderItemResponse {
+  bool success = 1;
+  string error = 2;
+}
+
+// User message
+message User {
+  int32 id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string email = 4;
+  string password = 5;
+  bool verified = 6;
+  string created_at = 7;
+}
+
+// Product message
+message Product {
+  int32 id = 1;
+  string name = 2;
+  string description = 3;
+  string merchant = 4;
+  string category = 5;
+  string currency = 6;
+  string image = 7;
+  double price = 8;
+  int32 quantity = 9;
+  string created_at = 10;
+}
+
+// Order message
+message Order {
+  int32 id = 1;
+  int32 user_id = 2;
+  double total = 3;
+  string status = 4;
+  string address = 5;
+  string created_at = 6;
+}
+
+// OrderItem message
+message OrderItem {
+  int32 id = 1;
+  int32 order_id = 2;
+  int32 product_id = 3;
+  int32 quantity = 4;
+  double price = 5;
+  string created_at = 6;
+}
+
+// Payload messages
+message RegisterUserPayload {
+  string first_name = 1;
+  string last_name = 2;
+  string email = 3;
+  string password = 4;
+}
+
+message LoginUserPayload {
+  string email = 1;
+  string password = 2;
+}
+
+message CartCheckoutPayload {
+  repeated CartItem items = 1;
+}
+
+message CartItem {
+  int32 product_id = 1;
+  int32 quantity = 2;
+}

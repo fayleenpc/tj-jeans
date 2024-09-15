@@ -1,0 +1,11 @@
+xendit:
+  ewallet:
+    ovo:
+      invoice: false
+      legacy: false
+    dana:
+      invoice: true
+      legacy: true
+    linkaja:
+      invoice: false
+      legacy: false

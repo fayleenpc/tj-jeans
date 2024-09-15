@@ -1,0 +1,24 @@
+package views
+
+templ Home() {
+    @Page(true) {
+        <div class="container-landing" id="landing_page">
+        <div class="content-landing">
+            <div class="div-text">
+                <span>TJ Jeans Store</span>
+                <h3>Semua Jenis</h3>
+                <h1>Gaya Ada Disini</h1>
+                <p>Kontak kami lebih lanjut di berbagai sosial media.</p>
+            </div>
+            <div class="div-img">
+                <img id="big-img" src="/static/images/jacket1.png" alt="">
+            </div>
+            <div class="small-img">
+                <img onclick="myTshirt(this.src)" src="/static/images/jacket1.png" alt="">
+                <img onclick="myTshirt(this.src)" src="/static/images/Jacket2.png" alt="">
+                <img onclick="myTshirt(this.src)" src="/static/images/jacket3.png" alt="">
+            </div>
+        </div>
+        </div>
+    }
+}

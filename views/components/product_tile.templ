@@ -1,0 +1,15 @@
+package components
+
+import "github.com/fayleenpc/types"
+import "fmt"
+
+templ Product_Tile(p types.Product) {
+    <img src={ fmt.Sprintf("/static/%v", p.image) } alt={ fmt.Sprintf("%v", p.name) } widht="200px" height="200px">
+    <h2>{ p.name }</h2>
+    <div class="price">{ p.currency } { p.price }</div>
+    <div class="quantity">Qty { p.qty }</div>
+    <div class="merchant">Merchant { p.merchant }</div>
+    <div class="category">Category { p.category }</div>
+    <p>{ p.description }</p>
+    <button class="addCart" onclick="addClass(document.querySelector('.icon-cart'), 'yippie');setTimeout(() => removeClass(document.querySelector('.icon-cart'), 'yippie'),700)">Add To Cart</button>
+}

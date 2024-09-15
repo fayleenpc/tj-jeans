@@ -1,0 +1,67 @@
+[
+    {
+        "id": 1,
+        "name":" LD01 LOUNGE CHAIR",
+        "description": " desc 1desc 1desc 1desc 1desc 1desc 1 ",
+        "price": 200,
+        "image": "/images/1.png",
+        "quantity": 500
+    },
+    {
+        "id": 2,
+        "name":" LD02 LOUNGE CHAIR",
+        "description": " desc 2desc 2desc 2desc 2desc 2desc 2 ",
+        "price": 250,
+        "image": "/images/2.png",
+        "quantity": 300
+    },
+    {
+        "id": 3,
+        "name":" LD03 LOUNGE CHAIR",
+        "description": " desc 3desc 3desc 3desc 3desc 3desc 3 ",
+        "price": 290,
+        "image": "/images/3.png",
+        "quantity": 250
+    },
+    {
+        "id": 4,
+        "name":" LD04 LOUNGE CHAIR",
+        "description": " desc 4desc 4desc 4desc 4desc 4desc 4 ",
+        "price": 200,
+        "image": "/images/4.png",
+        "quantity": 900
+    },
+    {
+        "id": 5,
+        "name":" LD05 LOUNGE CHAIR",
+        "description": " desc 5desc 5desc 5desc 5desc 5desc 5 ",
+        "price": 300,
+        "image": "/images/5.png",
+        "quantity": 1000
+    },
+    {
+        "id": 6,
+        "name":" LD06 LOUNGE CHAIR",
+        "description": " desc 6desc 6desc 6desc 6desc 6desc 6 ",
+        "price": 200,
+        "image": "/images/6.png",
+        "quantity": 553
+    },
+    {
+        "id": 7,
+        "name":" LD07 LOUNGE CHAIR",
+        "description": " desc 7desc 7desc 7desc 7desc 7desc 7 ",
+        "price": 200,
+        "image": "/images/7.png",
+        "quantity": 345
+    },
+    {
+        "id": 8,
+        "name":" LD08 LOUNGE CHAIR",
+        "description": " desc 8desc 8desc 8desc 8desc 8desc 8 ",
+        "price": 200,
+        "image": "/images/8.png",
+        "quantity": 123
+    }
+
+]
