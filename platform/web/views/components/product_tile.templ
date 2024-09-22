@@ -1,0 +1,19 @@
+package components
+
+import "github.com/fayleenpc/tj-jeans/internal/types"
+import "fmt"
+
+
+
+templ Product_Tile(p types.Product) {
+    <div class="item" data-id={ fmt.Sprintf("%v", p.ID) }>
+        <img src={ fmt.Sprintf("/platform/web/static/%v", p.Image) } alt={ p.Name } widht="200px" height="200px">
+        <h2>{ p.Name }</h2>
+        <div class="price">{ p.Currency } { fmt.Sprintf("%v", p.Price) }</div>
+        <div class="quantity">Qty  { fmt.Sprintf("%v", p.Quantity) } </div>
+        <div class="merchant">Merchant { p.Merchant }</div>
+        <div class="category">Category { p.Category }</div>
+        <p>{ p.Description }</p>
+        <button class="addCart" onclick="addCartTransition()">Add To Cart</button>
+    </div>
+}

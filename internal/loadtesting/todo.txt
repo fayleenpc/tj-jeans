@@ -1,0 +1,5 @@
+run
+    k6 run load_test.js
+
+specify number of virtual users and duration
+    k6 run --vus 10 --duration 30s load_test.js

@@ -4,8 +4,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/fayleenpc/tj-jeans/config"
-	"github.com/fayleenpc/tj-jeans/db"
+	"github.com/fayleenpc/tj-jeans/internal/config"
+	"github.com/fayleenpc/tj-jeans/internal/db"
 	mysqlCfg "github.com/go-sql-driver/mysql"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/mysql"

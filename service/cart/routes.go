@@ -4,9 +4,12 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/fayleenpc/tj-jeans/service/auth"
-	"github.com/fayleenpc/tj-jeans/types"
-	"github.com/fayleenpc/tj-jeans/utils"
+	"github.com/fayleenpc/tj-jeans/internal/auth"
+	"github.com/fayleenpc/tj-jeans/internal/logger"
+	"github.com/fayleenpc/tj-jeans/internal/ratelimiter"
+	"github.com/fayleenpc/tj-jeans/internal/session"
+	"github.com/fayleenpc/tj-jeans/internal/types"
+	"github.com/fayleenpc/tj-jeans/internal/utils"
 	"github.com/go-playground/validator"
 	"github.com/gorilla/mux"
 	"github.com/opentracing/opentracing-go"
@@ -17,16 +20,30 @@ type Handler struct {
 	store        types.OrderStore
 	productStore types.ProductStore
 	userStore    types.UserStore
+	tokenStore   types.TokenStore
 }
 
-func NewHandler(store types.OrderStore, productStore types.ProductStore, userStore types.UserStore) *Handler {
-	return &Handler{store: store, productStore: productStore, userStore: userStore}
+func NewHandler(store types.OrderStore, productStore types.ProductStore, userStore types.UserStore, tokenStore types.TokenStore) *Handler {
+	return &Handler{store: store, productStore: productStore, userStore: userStore, tokenStore: tokenStore}
 }
 
 func (h *Handler) RegisterRoutes(router *mux.Router) {
-	router.HandleFunc("/cart/checkout", auth.WithLogger(auth.WithRateLimiter(auth.WithJWTAuth(h.handleCheckout, h.userStore)))).Methods("POST")
+	router.HandleFunc("/cart/checkout", logger.WithLogger(ratelimiter.WithRateLimiter(auth.WithJWTAuth(h.handleCheckout, h.userStore, h.tokenStore)))).Methods("POST")
 }
 
+// handleCheckout godoc
+//
+//	@Summary		Checkout a products using JWT Token ( accessToken )
+//	@Description	Checkout a products using JWT Token ( accessToken ), with login credentials ( role admin & customer )
+//	@Tags			cart
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{object}	types.CartCheckoutPayload
+//	@Failure		400	{object}	error
+//	@Failure		404	{object}	error
+//	@Failure		500	{object}	error
+//	@Security		ApiKeyAuth
+//	@Router			/api/v1/cart/checkout [post]
 func (h *Handler) handleCheckout(w http.ResponseWriter, r *http.Request) {
 	span := opentracing.GlobalTracer().StartSpan("handleCheckout")
 	defer span.Finish()
@@ -34,7 +51,8 @@ func (h *Handler) handleCheckout(w http.ResponseWriter, r *http.Request) {
 	span.SetTag(string(ext.Component), "http")
 	span.SetTag("http.method", r.Method)
 
-	userID := auth.GetUserIDFromContext(r.Context())
+	// userID := auth.GetUserIDFromContext(r.Context())
+	userID := auth.GetUserIDFromSession(session.SessionStoreClient.Get(), h.userStore)
 	var cart types.CartCheckoutPayload
 	if err := utils.ParseJSON(r, &cart); err != nil {
 		utils.WriteError(w, http.StatusBadRequest, err)

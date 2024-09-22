@@ -23,17 +23,17 @@ import (
 
 func NewServer() *server.Server {
 	dir, _ := os.Getwd()
-	config, err := localconfig.LoadConfig(dir + "\\config\\config.yaml")
+	config, err := localconfig.LoadConfig(dir + "\\internal\\config\\config.yaml")
 	if err != nil {
 		panic(err)
 	}
 
-	secret, err := localconfig.LoadSecret(dir + "\\config\\secret.yaml")
+	secret, err := localconfig.LoadSecret(dir + "\\internal\\config\\secret.yaml")
 	if err != nil {
 		panic(err)
 	}
 
-	db, err := gorm.Open(sqlite.Open(dir+"\\db\\gorm.db"), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open(dir+"\\internal\\db\\gorm.db"), &gorm.Config{})
 	if err != nil {
 		log.Fatal().Msg(err.Error())
 	}
@@ -52,7 +52,7 @@ func NewServer() *server.Server {
 	m.MustMidtransTransactionStatusRepository(dssql.NewMidtransTransactionRepository(db))
 	m.MustInvoiceRepository(dssql.NewInvoiceRepository(db))
 	m.MustSubscriptionRepository(dssql.NewSubscriptionRepository(db))
-	m.MustPaymentConfigReader(inmemory.NewPaymentConfigRepository(dir + "\\config\\payment-methods.yaml"))
+	m.MustPaymentConfigReader(inmemory.NewPaymentConfigRepository(dir + "\\internal\\config\\payment-methods.yaml"))
 	return server.NewServer(m)
 
 }

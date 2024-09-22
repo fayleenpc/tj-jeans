@@ -1,0 +1,90 @@
+package views
+
+import "github.com/fayleenpc/tj-jeans/platform/web/views/components"
+
+var try_script_page = templ.NewOnceHandle()
+
+templ Page(nav bool, username string) {
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>TJ Jeans Store</title>
+        <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet"/>
+        <link rel="stylesheet" href="/platform/web/static/style.css"/>
+        <link rel="icon" href="/platform/web/static/images/TJJeans.ico"/>
+        <script src="https://unpkg.com/htmx.org@2.0.2"></script>
+    </head>
+    <body>
+        if nav {
+            <nav class="nav">
+                <div class="nav-logo">
+                    <p>TJ Jeans</p>
+                </div>
+                <div class="nav-menu" id="navMenu">
+                    <ul>
+                        <li><a href="/" class="link" id="home" onclick="addActiveClass(document.getElementById('home'), 'active')">Beranda</a></li>
+                        <li><a href="/products" class="link" onclick="addActiveClass(document.getElementById('products'), 'active')" id="products">Produk</a></li>
+                        <li><a href="/gallery" class="link" id="gallery" onclick="addActiveClass(document.getElementById('gallery'), 'active')">Galeri</a></li>
+                        @components.UserNameDisplay(username)
+                    </ul>
+                </div>
+                <div class="nav-button" id="nav-button">
+                        @components.UserNameLogout(username)
+                </div>
+                <div class="nav-menu-btn">
+                    <i class="bx bx-menu" onclick="myMenuFunction()"></i>
+                </div>
+            </nav>
+        }
+        <div class="notifications"></div>
+        { children... }
+    </body>
+
+    
+    
+    </html>
+    @try_script_page.Once() {
+    <script>
+        let notifications = document.querySelector('.notifications');
+        function myMenuFunction() {
+                var i = document.getElementById("navMenu");
+
+                if(i.className === "nav-menu") {
+                    i.className += " responsive";
+                } else {
+                    i.className = "nav-menu";
+                }
+        }
+        
+        function hasActiveClass(el, className)
+        {
+            if (el.classList) {
+                return el.classList.contains(className);
+            }
+            return !!el.className.match(new RegExp('(\\s|^)' + className + '(\\s|$)'));
+        }
+
+        function addActiveClass(el, className)
+        {
+            if (el.classList)
+                el.classList.add(className)
+            else if (!hasClass(el, className))
+                el.className += " " + className;
+        }
+
+        function removeActiveClass(el, className)
+        {
+            if (el.classList)
+                el.classList.remove(className)
+            else if (hasClass(el, className))
+            {
+                var reg = new RegExp('(\\s|^)' + className + '(\\s|$)');
+                el.className = el.className.replace(reg, ' ');
+            }
+        }
+    </script>
+    }
+}
+

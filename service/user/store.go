@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/fayleenpc/tj-jeans/types"
+	"github.com/fayleenpc/tj-jeans/internal/types"
 )
 
 type Store struct {

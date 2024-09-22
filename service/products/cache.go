@@ -5,8 +5,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/fayleenpc/tj-jeans/types"
-	"github.com/fayleenpc/tj-jeans/utils"
+	"github.com/fayleenpc/tj-jeans/internal/types"
+	"github.com/fayleenpc/tj-jeans/internal/utils"
 	"github.com/nats-io/nats.go"
 )
 

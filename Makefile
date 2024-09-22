@@ -8,7 +8,7 @@ run: build
 	@./bin/ecom
 
 templ:
-	@templ generate ./views
+	@templ generate ./platform/web/views
 
 migration:
 	@migrate create -ext sql -dir cmd/migrate/migrations $(filter-out $@, $(MAKECMDGOALS))

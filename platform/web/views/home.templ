@@ -1,0 +1,35 @@
+package views
+
+import "fmt"
+
+var try_script_home = templ.NewOnceHandle()
+
+script myTshirt(shirt any) {
+    let bigImage = document.getElementById('big-img');
+    bigImage.src = shirt
+}
+
+templ Home(username string) {
+    @Page(true, username) {
+        <div class="container-landing" id="landing_page">
+        <div class="content-landing">
+            <div class="div-text">
+                <span>TJ Jeans Store</span>
+                <h3>Semua Jenis</h3>
+                <h1>Gaya Ada Disini</h1>
+                <p>Kontak kami lebih lanjut di berbagai sosial media.</p>
+            </div>
+            <div class="div-img">
+                <img id="big-img" src="/platform/web/static/images/jacket1.png" alt="">
+            </div>
+            <div class="small-img">
+                <img onclick={ myTshirt(fmt.Sprintf("%s", "this.src")) } src="/platform/web/static/images/jacket1.png" alt="">
+                <img onclick={ myTshirt(fmt.Sprintf("%s", "this.src")) } src="/platform/web/static/images/Jacket2.png" alt="">
+                <img onclick={ myTshirt(fmt.Sprintf("%s", "this.src")) } src="/platform/web/static/images/jacket3.png" alt="">
+            </div>
+            
+        </div>
+        </div>
+
+    }
+}

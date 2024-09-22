@@ -3,7 +3,7 @@ package cart
 import (
 	"fmt"
 
-	"github.com/fayleenpc/tj-jeans/types"
+	"github.com/fayleenpc/tj-jeans/internal/types"
 )
 
 func getCartItemsIDs(items []types.CartItem) ([]int, error) {

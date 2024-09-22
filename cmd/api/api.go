@@ -2,22 +2,27 @@ package api
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 
-	"github.com/fayleenpc/tj-jeans/monitoring"
+	"github.com/fayleenpc/tj-jeans/cmd/docs"
+	"github.com/fayleenpc/tj-jeans/internal/monitoring"
 	"github.com/opentracing/opentracing-go"
 
-	"github.com/fayleenpc/tj-jeans/config"
+	"github.com/fayleenpc/tj-jeans/internal/config"
+	"github.com/fayleenpc/tj-jeans/internal/landing"
 	"github.com/fayleenpc/tj-jeans/service/cart"
 	"github.com/fayleenpc/tj-jeans/service/gateway/payment"
-	"github.com/fayleenpc/tj-jeans/service/landing"
 	"github.com/fayleenpc/tj-jeans/service/order"
 	"github.com/fayleenpc/tj-jeans/service/products"
+	"github.com/fayleenpc/tj-jeans/service/tokenize"
 	"github.com/fayleenpc/tj-jeans/service/user"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
+
+const version = "1.0.0"
 
 type APIServer struct {
 	addr string
@@ -108,41 +113,80 @@ func NewAPIServer(addr string, db *sql.DB) *APIServer {
 //   }
 
 func (s *APIServer) Run() error {
+	apihost := fmt.Sprintf("%v:%v", config.Envs.PublicHost, config.Envs.Port)
+	// Docs
+	docs.SwaggerInfo.Version = version
+	docs.SwaggerInfo.Host = apihost
+	docs.SwaggerInfo.BasePath = "/api/v1"
 
 	tracer, closer := monitoring.Jaegar()
 	opentracing.SetGlobalTracer(tracer)
 	defer closer.Close()
 
-	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With"})
-	originsOk := handlers.AllowedOrigins([]string{config.Envs.PublicHost + "/", config.Envs.PublicHost + "/api/v1/verify", config.Envs.PublicHost + "/api/v1/login", config.Envs.PublicHost + "/api/v1/register", config.Envs.PublicHost + "/api/v1/payment/*", config.Envs.PublicHost + "/api/v1/cart/checkout"})
-	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
+	headersOk := handlers.AllowedHeaders([]string{
+		"X-Requested-With",
+		"Content-Type, Authorization",
+		"Access-Control-Allow-Credentials",
+		"Access-Control-Allow-Origin",
+		"Access-Control-Allow-Methods",
+		"Access-Control-Allow-Headers",
+	})
+	originsOk := handlers.AllowedOrigins([]string{
+		apihost + "/",
+		apihost + "/products",
+		apihost + "/gallery",
+		apihost + "/service",
+		apihost + "/api/v1/verify",
+		apihost + "/api/v1/login",
+		apihost + "/api/v1/refresh",
+		apihost + "/api/v1/logout",
+		apihost + "/api/v1/register",
+		apihost + "/api/v1/payment/*",
+		apihost + "/api/v1/cart/checkout",
+	})
+	methodsOk := handlers.AllowedMethods([]string{
+		"GET", "HEAD", "POST", "PUT", "OPTIONS",
+	})
 
 	router := mux.NewRouter()
 
 	subrouter := router.PathPrefix("/api/v1").Subrouter()
+
+	// token store
+	tokenStore := tokenize.NewStore(s.db)
 
 	userStore := user.NewStore(s.db)
 	userHandler := user.NewHandler(userStore)
 	userHandler.RegisterRoutes(subrouter)
 
 	productStore := products.NewStore(s.db)
-	productHandler := products.NewHandler(productStore, userStore)
+	productHandler := products.NewHandler(productStore, userStore, tokenStore)
 	productHandler.RegisterRoutes(subrouter)
 
 	orderStore := order.NewStore(s.db)
-	cartHandler := cart.NewHandler(orderStore, productStore, userStore)
+	cartHandler := cart.NewHandler(orderStore, productStore, userStore, tokenStore)
 	cartHandler.RegisterRoutes(subrouter)
 
 	// payment gateway
 	paymentGateway := payment.NewHandler(subrouter, payment.NewServer())
 	paymentGateway.RegisterRoutes()
+
+	// tokenize
+
+	tokenizeHandler := tokenize.NewHandler(tokenStore, userStore)
+	tokenizeHandler.RegisterRoutes(subrouter)
+
+	// swagger
+	// swag := swagger.NewHandler()
+	// swag.RegisterRoutes()
+
 	// landing
-	landing := landing.NewHandler()
+	landing := landing.NewHandler(tokenStore)
 	landing.RegisterRoutes(router)
 
 	// serve files in static folder
-	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
-	router.PathPrefix("/static/images/").Handler(http.StripPrefix("/static/images/", http.FileServer(http.Dir("static/images"))))
+	router.PathPrefix("/platform/web/static/").Handler(http.StripPrefix("/platform/web/static/", http.FileServer(http.Dir("platform/web/static"))))
+	router.PathPrefix("/platform/web/static/images/").Handler(http.StripPrefix("/platform/web/static/images/", http.FileServer(http.Dir("platform/web/static/images"))))
 
 	// serve files in static-admin folder
 	// router.PathPrefix("/static-admin/").Handler(http.StripPrefix("/static-admin/", http.FileServer(http.Dir("static-admin"))))

@@ -1,0 +1,14 @@
+Frontend improvement
+
+All page show username
+Give relevant data backend to frontend -> templ
+------------------------
+fix server send to synchronize between client receive without failing to deliver each other
+
+------ Swagger Docs ------
+
+--------------------------
+
+--------- CI/CD ----------
+
+--------------------------

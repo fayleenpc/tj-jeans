@@ -1,0 +1,20 @@
+package components
+
+templ UserNameDisplay(username string) {
+	if username != "" {
+        <li><a href="/service" class="link" id="service" onclick="addActiveClass(document.getElementById('service'), 'active')" disabled>Layanan</a></li>
+    }
+    if username == "" {
+        <li><a href="/service" class="link" id="service" onclick="addActiveClass(document.getElementById('service'), 'active')">Layanan</a></li>
+    }
+}
+
+templ UserNameLogout(username string) {
+	if username != "" {
+        <button class="btn" onclick="Logout()" id="logout">Selamat datang, { username }!</button>
+    }
+    if username == "" {
+       <button class="btn" onclick="Logout()" id="logout" disabled>Selamat datang!</button>
+    }
+}
+
