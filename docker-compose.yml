@@ -1,44 +1,25 @@
-version: '3.8'
-
 services:
-  db:
-    image: postgres:16.3
-    container_name: postgres-db
-    environment:
-      POSTGRES_DB: socialnetwork
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: adminpassword
-    networks:
-      - backend 
-    volumes:
-      - db-data:/var/lib/postgresql/data
+  web:
+    build: .
     ports:
-      - "5432:5432"
-
-  redis:
-    image: redis:6.2-alpine
-    restart: unless-stopped
-    container_name: redis
-    ports:
-      - "6379:6379"
-    command: redis-server --save 60 1 --loglevel warning
-
-  redis-commander:
-    container_name: redis-commander
-    hostname: redis-commander
-    image: rediscommander/redis-commander:latest
-    environment:
-    - REDIS_HOST=redis
-    ports:
-      - "127.0.0.1:8081:8081"
+      - "8080:8080"
     depends_on:
-      - redis
-    restart:
-      unless-stopped
-  
-volumes:
-  db-data:
+      - mysql
+    environment:
+      DB_USER: root
+      DB_PASSWORD: ""
+      DB_NAME: tj-jeans
 
-networks:
-  backend:
-    driver: bridge
+  mysql:
+    image: mysql:latest  # Use the latest version of MySQL
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ""
+      MYSQL_DATABASE: tj-jeans
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:

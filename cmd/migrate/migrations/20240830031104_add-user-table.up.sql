@@ -4,6 +4,8 @@ CREATE TABLE IF NOT EXISTS users (
     `lastName` VARCHAR(255) NOT NULL,
     `email` VARCHAR(255) NOT NULL,
     `password` VARCHAR(255) NOT NULL,
+    `phoneNumber` VARCHAR(255) NOT NULL,
+    `address` VARCHAR(255) NOT NULL,
     `verified` BOOLEAN NOT NULL,
     `role` VARCHAR(255) NOT NULL,
     `createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

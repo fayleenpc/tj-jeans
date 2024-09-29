@@ -9,8 +9,8 @@ script myTshirt(shirt any) {
     bigImage.src = shirt
 }
 
-templ Home(username string) {
-    @Page(true, username) {
+templ Home(username string, role string) {
+    @Page(true, username, role) {
         <div class="container-landing" id="landing_page">
         <div class="content-landing">
             <div class="div-text">

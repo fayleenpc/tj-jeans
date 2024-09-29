@@ -1,0 +1,23 @@
+package views_admin
+
+import "github.com/fayleenpc/tj-jeans/internal/types"
+
+import "github.com/fayleenpc/tj-jeans/platform/web/views_admin/components"
+
+templ Customers(username string, customers []types.User) {
+    @Page(true, username) {
+        <!-- ================= New Customers ================ -->
+                <div class="recentCustomers">
+                    <div class="cardHeader">
+                        <h2>Customers</h2>
+                    </div>
+
+                    <table>
+                        for _, customer := range customers {
+                            @components.Customer_Tile(customer)
+                        }  
+                    </table>
+                    
+                </div>
+    }
+}

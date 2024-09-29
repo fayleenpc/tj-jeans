@@ -1,0 +1,40 @@
+package views_admin
+
+import "github.com/fayleenpc/tj-jeans/internal/types"
+import "github.com/fayleenpc/tj-jeans/platform/web/views_admin/components"
+
+templ Orders(username string, orders []types.Order) {
+    @Page(true, username) {
+        <!-- ================ Order Items ================= -->
+            <div class="details">
+                <div class="recentOrders">
+                    <div class="cardHeader">
+                        <h2>Orders</h2>
+                        <a href="#" class="btn">View All</a>
+                    </div>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <td>Order ID</td>
+                                <td>User ID</td>
+                                <td>Total</td>
+                                <td>Address</td>
+                                <td>Status</td>
+                                <td>Created At</td>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            for _, order := range orders {
+                                @components.Order_Tile(order)
+                            } 
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+    }
+}

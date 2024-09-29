@@ -12,7 +12,7 @@ import "github.com/fayleenpc/tj-jeans/platform/web/views/components"
 
 var try_script_page = templ.NewOnceHandle()
 
-func Page(nav bool, username string) templ.Component {
+func Page(nav bool, username string, role string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -42,7 +42,11 @@ func Page(nav bool, username string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.UserNameDisplay(username).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.DisplayMenuLogin(username).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.DisplayMenuAdmin(role).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -50,7 +54,7 @@ func Page(nav bool, username string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.UserNameLogout(username).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.DisplayButtonLogout(username).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

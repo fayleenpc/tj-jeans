@@ -2,8 +2,8 @@ package views
 
 var try_script_gallery = templ.NewOnceHandle()
 
-templ Gallery(username string) {
-    @Page(true, username) {
+templ Gallery(username string, role string) {
+    @Page(true, username, role) {
     <div class="container-background" id="gallery_page">
     <div class="slide-background">
         <div class="item-background" style="background-image: url(/platform/web/static/images/bg1.jpg);">

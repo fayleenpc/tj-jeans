@@ -3,11 +3,10 @@ package views
 import "github.com/fayleenpc/tj-jeans/internal/types"
 import "github.com/fayleenpc/tj-jeans/platform/web/views/components"
 
-var try_script_products = templ.NewOnceHandle()
 var try_script_product_tile = templ.NewOnceHandle()
 
-templ Products(ps []types.Product, username string) {
-    @Page(true, username) {
+templ Products(products []types.Product, username string, role string) {
+    @Page(true, username, role) {
     <div class="container" id="products_page">
     <header>
         <div class="title">DAFTAR PRODUK</div>
@@ -19,7 +18,7 @@ templ Products(ps []types.Product, username string) {
         </div>
     </header>
     <div class="listProduct">
-        for _, product := range ps {
+        for _, product := range products {
             @components.Product_Tile(product)
         }
     </div>
@@ -36,7 +35,7 @@ templ Products(ps []types.Product, username string) {
             <button class="checkOut">CHECKOUT</button>
         </div>
     </div>
-    @try_script_products.Once() {
+    
     <script>
         let listProductHTML = document.querySelector('.listProduct');
         let listCartHTML = document.querySelector('.listCart');
@@ -47,7 +46,7 @@ templ Products(ps []types.Product, username string) {
         let products = [];
         let cart = [];
         let checkoutCart = document.querySelector('.checkOut');
-        let cart_json = ``
+
 
 
         let yippie = document.getElementsByClassName('yippie')
@@ -81,62 +80,31 @@ templ Products(ps []types.Product, username string) {
             var messageForWhatsapp = ``
             var total = 0
 
-            if (cart_json != ``) {
-                fetch("/api/v1/cart/checkout", {
+            if (localStorage.getItem("cart") != ``) {
+                fetch("/cart/checkout", {
                     method: "POST",
-                    body: cart_json,
+                    body: `{ "items" : ${ JSON.stringify(cart) } }`,
                     headers: {
                         "Content-Type": "application/json; charset=UTF-8"
                     }
                 }).then(response => response.json())
                 .then(data => {
-                    // console.log(data)
-                    if (data.error == 'permission denied') {
+                    console.log(data)
+                    if (data.error) {
                         // alert(data.error)
                         let type = 'warning';
                         let icon = 'fa-solid fa-triangle-exclamation';
                         let title = 'Simpan Keranjang Belanja Gagal';
                         let text = 'Kamu harus login terlebih dahulu untuk melakukan penyimpanan pembelian.';
                         createToast(type, icon, title, text);
-                    } else {
-                        // alert('success checkout')
-                        // console.log(cart_json)
-                        // console.log(data)
+                    } 
+                    else {
                         let type = 'success';
                         let icon = 'fa-solid fa-circle-check';
                         let title = 'Simpan Keranjang Belanja Berhasil';
                         let text = 'Kamu telah menyimpan barang pembelian dan melakukan checkout/pembelian ke payment xendit/midtrans.';
                         createToast(type, icon, title, text);
-                        let payment_invoices_json = `{ 
-                        "payment": {
-                            "payment_type": "dana",
-                            "amount": ${data.total_price}
-                        }, 
-                        "customer": {
-                            "name": "TJ Jeans", 
-                            "email": "", 
-                            "phone_number": "089505208391"
-                        }, 
-                        "items": ${JSON.stringify(data.items)}
-                        }`
-                        fetch("/api/v1/payment/invoices", {
-                            method: "POST",
-                            body: payment_invoices_json,
-                            headers: {
-                            "Content-Type": "application/json; charset=UTF-8",
-                            }
-                        }).then(response => response.json())
-                        .then(data => {
-                            console.log(data)
-                            messageForWhatsapp += `Atas nama data penjual\n\nMerchant : ${data.billing_address.name}\nNo Telp : ${data.billing_address.phone_number}\n\nAtas nama data pembeli (isi data dengan lengkap)\n\nNama : \nEmail: ${localStorage.getItem('username')}\nNo Telp : \nAlamat Tujuan Pengiriman : \nBarang Yang Dibeli : \n`
-                            for (i = 0; i < data.items.length; i++) {
-                                messageForWhatsapp += `Produk -> ${data.items[i].name} -> Jumlah ${data.items[i].qty} -> Harga Satuan ${data.items[i].unit_price}\n`
-                                total += data.items[i].qty * data.items[i].unit_price
-                            }
-                            messageForWhatsapp += `\nUntuk pembayaran totalnya seharga Rp ${total} (silahkan konfirmasi jika data sudah benar), lalu akses url berikut ${data.payment.redirect_url}\nMohon mengirimkan bukti transfer ketika sudah maka proses pengiriman dapat dilakukan, terima kasih.`
-
-                            window.open('http://wa.me/089505208391?text='+ encodeURIComponent(messageForWhatsapp))
-                        })
+                        
                     }
                 })
             }
@@ -158,16 +126,16 @@ templ Products(ps []types.Product, username string) {
             let positionThisProductInCart = cart.findIndex((value) => value.product_id == product_id);
             if(cart.length <= 0){
                 cart = [{
-                    product_id: product_id,
-                    quantity: 1
+                    product_id: Number(product_id),
+                    qty: 1
                 }];
             }else if(positionThisProductInCart < 0){
                 cart.push({
-                    product_id: product_id,
-                    quantity: 1
+                    product_id: Number(product_id),
+                    qty: 1
                 });
             }else{
-                cart[positionThisProductInCart].quantity = cart[positionThisProductInCart].quantity + 1;
+                cart[positionThisProductInCart].qty = cart[positionThisProductInCart].qty + 1;
             }
             addCartToHTML();
             addCartToMemory();
@@ -178,14 +146,10 @@ templ Products(ps []types.Product, username string) {
         const addCartToHTML = () => {
             listCartHTML.innerHTML = '';
             let totalQuantity = 0;
-
-            let start_cart_json = `{ "items" : [  `;
-            let body_cart_json = ``;
-            let end_cart_json = `] }`;
             
             if(cart.length > 0){
                 cart.forEach((item, index) => {
-                    totalQuantity = totalQuantity +  item.quantity;
+                    totalQuantity = totalQuantity +  item.qty;
                     let newItem = document.createElement('div');
                     newItem.classList.add('item');
                     newItem.dataset.id = item.product_id;
@@ -200,22 +164,18 @@ templ Products(ps []types.Product, username string) {
                         <div class="name">
                         ${info.name}
                         </div>
-                        <div class="totalPrice">IDR ${info.price * item.quantity}</div>
+                        <div class="totalPrice">IDR ${info.price * item.qty}</div>
                         <div class="quantity">
                             <span class="minus"><</span>
-                            <span>${item.quantity}</span>
+                            <span>${item.qty}</span>
                             <span class="plus">></span>
                         </div>
                     `;
-                    body_cart_json += `{ "productID" : ${positionProduct+1}, "qty": ${item.quantity}}`;
-                    if (index != cart.length-1) {
-                        body_cart_json += `, `
-                    }
                     
                     
                 })
-                cart_json = start_cart_json + body_cart_json + end_cart_json
-                // console.log(cart_json)
+
+
             }
             iconCartSpan.innerText = totalQuantity;
         }
@@ -287,5 +247,5 @@ templ Products(ps []types.Product, username string) {
     </script>
     }
 
-    }
+    
 }

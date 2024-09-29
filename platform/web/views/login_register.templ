@@ -2,8 +2,8 @@ package views
 
 var try_script_login_register = templ.NewOnceHandle()
 
-templ Login_Register(username string) {
-    @Page(true, username) {
+templ Login_Register(username string, role string) {
+    @Page(true, username, role) {
     <div class="wrapper" id="login_register_page">
     <div class="form-box">
         
@@ -14,7 +14,7 @@ templ Login_Register(username string) {
                 <header>Masuk</header>
             </div>
             <div class="input-box">
-                <input type="text" class="input-field" placeholder="Username atau Email" id="login_username_email_input">
+                <input type="text" class="input-field" placeholder="Email" id="login_email_input">
                 <i class="bx bx-user"></i>
             </div>
             <div class="input-box">
@@ -56,11 +56,19 @@ templ Login_Register(username string) {
                 <i class="bx bx-envelope"></i>
             </div>
             <div class="input-box">
+                <input type="text" class="input-field" placeholder="Nomor Telepon" id="register_phoneNumber_input">
+                <i class="bx bx-phone"></i>
+            </div>
+            <div class="input-box">
+                <input type="text" class="input-field" placeholder="Alamat Rumah/Pengiriman" id="register_address_input">
+                <i class="bx bx-package"></i>
+            </div>
+            <div class="input-box">
                 <input type="password" class="input-field" placeholder="Password" id="register_password_input">
                 <i class="bx bx-lock-alt"></i>
             </div>
             <div class="input-box">
-                <input type="submit" class="submit" value="Daftar" onclick="">
+                <input type="submit" class="submit" value="Daftar">
             </div>
             <div class="two-col">
                 <div class="one">
@@ -122,25 +130,16 @@ templ Login_Register(username string) {
         }
 
         login_submit.addEventListener('click', () => {
-            // {
-            //     "email": "me@me.com",
-            //     "password": "asd"
-            // }
-            let username_login = document.querySelector('#login_username_email_input')
+            let email_login = document.querySelector('#login_email_input')
             let password_login = document.querySelector('#login_password_input')
             // let start_login_json = `{ `;
             // let body_login_json = ` "email": "${username_login.value}", "password": "${password_login.value}"`;
             // let end_login_json = ` }`;
             // let login_json = start_login_json + body_login_json + end_login_json
-            let products_page = document.getElementById("products_page")
-    
-            // console.log(login_json)
-            // alert('clicked login')
             try {
-                fetch("/api/v1/login", {
+                fetch("/service/login", {
                 method: "POST",
-                body: JSON.stringify({email: `${username_login.value}`, password: `${password_login.value}`}),
-                credentials: "include",
+                body: JSON.stringify({email: `${email_login.value}`, password: `${password_login.value}`}),
                 headers: {
                     "Content-Type": "application/json; charset=UTF-8"
                 }
@@ -162,12 +161,15 @@ templ Login_Register(username string) {
                     
                 } 
                 
-                console.log(data.access_token)
-                let type = 'success';
-                let icon = 'fa-solid fa-circle-check';
-                let title = 'Masuk Akun Berhasil';
-                let text = 'Kamu berhasil login juga dapat berbelanja di menu produk untuk checkout sekaligus bayar.';
-                createToast(type, icon, title, text);
+                if (data.access_token) {
+                    console.log(data.access_token)
+                    let type = 'success';
+                    let icon = 'fa-solid fa-circle-check';
+                    let title = 'Masuk Akun Berhasil';
+                    let text = 'Kamu berhasil login juga dapat berbelanja di menu produk untuk checkout sekaligus bayar.';
+                    createToast(type, icon, title, text);
+                    setTimeout(() => window.location = 'http://localhost:8080', 5000)
+                    }
                 }
             )
 
@@ -189,9 +191,11 @@ templ Login_Register(username string) {
             //     "firstName": "tiago",
             //     "lastName": "user"
             // }
-            let firstName_register = document.querySelector('#register_firstname_input')
-            let lastName_register = document.querySelector('#register_lastname_input')
+            let first_name_register = document.querySelector('#register_firstname_input')
+            let last_name_register = document.querySelector('#register_lastname_input')
             let email_register = document.querySelector('#register_email_input')
+            let phone_number_register = document.querySelector('#register_phoneNumber_input')
+            let address_register = document.querySelector(`#register_address_input`)
             let password_register = document.querySelector('#register_password_input')
             // let start_register_json = `{ `;
             // let body_register_json = `"email": "${email_register.value}", "password": "${password_register.value}", "firstName": "${firstName_register.value}", "lastName": "${lastName_register.value}"`;
@@ -200,17 +204,17 @@ templ Login_Register(username string) {
             // console.log(register_json)
             // alert('clicked register')
 
-            fetch("/api/v1/register", {
+            fetch("/service/register", {
                 method: "POST",
-                body: JSON.stringify({email: `${email_register.value}`, password: `${password_register.value}`, firstname: `${firstName_register.value}`, lastname: `${lastName_register.value}`}),
+                body: JSON.stringify({email: `${email_register.value}`, address: `${address_register.value}`,phone_number: `${phone_number_register.value}`, password: `${password_register.value}`, first_name: `${first_name_register.value}`, last_name: `${last_name_register.value}`}),
                 headers: {
                 "Content-Type": "application/json; charset=UTF-8"
                 }
             }).then(response => response.json())
             .then(data => {
-                console.log(body_register_json)
+                // console.log(body_register_json)
                 console.log(data)
-                if (data.verify_url) {
+                if (data.verify_url != "") {
                     // alert('success register')
                     let type = 'success';
                     let icon = 'fa-solid fa-circle-check';
@@ -222,7 +226,7 @@ templ Login_Register(username string) {
                     // window.open(`${data.verify_url}`)
                 }
                 
-                if (data != null && data.error) {
+                if (data.error) {
                     // alert(data.error)
                     let type = 'error';
                     let icon = 'fa-solid fa-circle-exclamation';

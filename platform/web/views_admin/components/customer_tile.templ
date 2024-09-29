@@ -1,0 +1,30 @@
+package components
+
+import "github.com/fayleenpc/tj-jeans/internal/types"
+import "fmt"
+
+templ Customer_Tile(customer types.User) {
+    <tr>
+        <td width="60px">
+            <div class="imgBx"><img src="/platform/web/static_admin/images/customer02.jpg" alt=""></div>
+        </td>
+        <td>
+            <h4>
+                { customer.FirstName } { customer.LastName } 
+                <br> 
+                    <span> { fmt.Sprintf("Nomor Telepon \t : \t %v", customer.PhoneNumber) } </span>
+                <br>
+                    <span> { fmt.Sprintf("Email \t : \t %v", customer.Email) } </span>
+                <br>
+                    <span> { fmt.Sprintf("Password \t : \t %v", customer.Password) } </span>
+                <br>
+                    <span> { fmt.Sprintf("Role \t : \t %v", customer.Role) } </span>
+                <br>
+                    <span> { fmt.Sprintf("Verified \t : \t %v", customer.Verified) } </span>
+                <br>
+                    <span> { fmt.Sprintf("Created At \t : \t %v", customer.CreatedAt) } </span>
+                    
+            </h4>
+        </td>
+    </tr>
+} 

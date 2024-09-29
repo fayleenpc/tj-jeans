@@ -1,0 +1,26 @@
+package components
+
+import "github.com/fayleenpc/tj-jeans/internal/types"
+import "fmt"
+
+templ Order_Item_Tile(item types.OrderItem) {
+    <tr>
+        <td width="60px">
+            <div class="imgBx"><img src={ fmt.Sprintf("/platform/web/static/%v", "images/1.png") } alt=""></div>
+        </td>
+        <td>
+            <h4>
+                { fmt.Sprintf("ID : %v", item.ID) }
+                <br>
+                    <span>{ fmt.Sprintf("ProductID \t : \t %v", item.ProductID) }</span> 
+                <br> 
+                    <span>{ fmt.Sprintf("OrderID \t : \t %v", item.OrderID) } </span>
+                <br>
+                    <span>{ fmt.Sprintf("Price \t : \t %v", item.Price) }</span>
+                <br> 
+                    <span>{ fmt.Sprintf("Quantity \t : \t %v", item.Quantity) }</span>
+
+            </h4>
+        </td>
+    </tr>
+}

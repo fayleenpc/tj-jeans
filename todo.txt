@@ -3,8 +3,47 @@ Frontend improvement
 All page show username
 Give relevant data backend to frontend -> templ
 ------------------------
-fix server send to synchronize between client receive without failing to deliver each other
 
+/cart/checkout javascript error send to backend golang /cart/checkout -> /api/v1/cart/checkout
+let payment_invoices_json = `{ 
+                        "payment": {
+                            "payment_type": "dana",
+                            "amount": ${data.total_price}
+                        }, 
+                        "customer": {
+                            "name": "TJ Jeans", 
+                            "email": "", 
+                            "phone_number": "089505208391"
+                        }, 
+                        "items": ${JSON.stringify(data.items)}
+                        }`
+
+                        fetch("/api/v1/payment/invoices", {
+                            method: "POST",
+                            body: payment_invoices_json,
+                            headers: {
+                            "Content-Type": "application/json; charset=UTF-8",
+                            }
+                        }).then(response => response.json())
+                        .then(data => {
+                            console.log(data)
+                            messageForWhatsapp += `Atas nama data penjual\n\nMerchant : ${data.billing_address.name}\nNo Telp : ${data.billing_address.phone_number}\n\nAtas nama data pembeli (isi data dengan lengkap)\n\nNama : \nEmail: ${localStorage.getItem('username')}\nNo Telp : \nAlamat Tujuan Pengiriman : \nBarang Yang Dibeli : \n`
+                            for (i = 0; i < data.items.length; i++) {
+                                messageForWhatsapp += `Produk -> ${data.items[i].name} -> Jumlah ${data.items[i].qty} -> Harga Satuan ${data.items[i].unit_price}\n`
+                                total += data.items[i].qty * data.items[i].unit_price
+                            }
+                            messageForWhatsapp += `\nUntuk pembayaran totalnya seharga Rp ${total} (silahkan konfirmasi jika data sudah benar), lalu akses url berikut ${data.payment.redirect_url}\nMohon mengirimkan bukti transfer ketika sudah maka proses pengiriman dapat dilakukan, terima kasih.`
+
+                            window.open('http://wa.me/089505208391?text='+ encodeURIComponent(messageForWhatsapp))
+                        })
+
+fetch("/cart/checkout", {
+                    method: "POST",
+                    body: `{ "items" : ${ localStorage.getItem("cart") } }`,
+                    headers: {
+                        "Content-Type": "application/json; charset=UTF-8"
+                    }
+                }).then(response => response.json()).then(data => console.log(data))
 ------ Swagger Docs ------
 
 --------------------------

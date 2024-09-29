@@ -1,175 +1,207 @@
 syntax = "proto3";
 
-option go_package = "github.com/fayleenpc/types_grpc";
+option go_package = "github.com/fayleenpc/tj-jeans/internal/types_grpc";
 
 package types_grpc;
 
-// UserStore service
-service UserStore {
-  rpc GetUserByEmail(GetUserByEmailRequest) returns (UserResponse);
-  rpc GetUserByID(GetUserByIDRequest) returns (UserResponse);
-  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
-  rpc UpdateVerifiedUserByEmail(UpdateVerifiedUserByEmailRequest) returns (UpdateVerifiedUserByEmailResponse);
-}
-
-// ProductStore service
-service ProductStore {
-  rpc GetProducts(GetProductsRequest) returns (GetProductsResponse);
-  rpc GetProductsByIDs(GetProductsByIDsRequest) returns (GetProductsResponse);
-  rpc CreateProduct(CreateProductRequest) returns (CreateProductResponse);
-  rpc UpdateProduct(UpdateProductRequest) returns (UpdateProductResponse);
-}
-
-// OrderStore service
-service OrderStore {
-  rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
-  rpc CreateOrderItem(CreateOrderItemRequest) returns (CreateOrderItemResponse);
-}
-
-// Messages for UserStore
-message GetUserByEmailRequest {
-  string email = 1;
-}
-
-message GetUserByIDRequest {
-  int32 id = 1;
-}
-
-message CreateUserRequest {
-  User user = 1;
-}
-
-message UpdateVerifiedUserByEmailRequest {
-  string email = 1;
-}
-
-message UserResponse {
-  User user = 1;
-  string error = 2;
-}
-
-message CreateUserResponse {
-  bool success = 1;
-  string error = 2;
-}
-
-message UpdateVerifiedUserByEmailResponse {
-  bool success = 1;
-  string error = 2;
-}
-
-// Messages for ProductStore
-message GetProductsRequest {}
-
-message GetProductsByIDsRequest {
-  repeated int32 ids = 1;
-}
-
-message GetProductsResponse {
-  repeated Product products = 1;
-  string error = 2;
-}
-
-message CreateProductRequest {
-  Product product = 1;
-}
-
-message CreateProductResponse {
-  int32 id = 1;
-  string error = 2;
-}
-
-message UpdateProductRequest {
-  Product product = 1;
-}
-
-message UpdateProductResponse {
-  bool success = 1;
-  string error = 2;
-}
-
-// Messages for OrderStore
-message CreateOrderRequest {
-  Order order = 1;
-}
-
-message CreateOrderResponse {
-  int32 id = 1;
-  string error = 2;
-}
-
-message CreateOrderItemRequest {
-  OrderItem order_item = 1;
-}
-
-message CreateOrderItemResponse {
-  bool success = 1;
-  string error = 2;
-}
-
-// User message
+// User message represents a user in the system.
 message User {
-  int32 id = 1;
-  string first_name = 2;
-  string last_name = 3;
-  string email = 4;
-  string password = 5;
-  bool verified = 6;
-  string created_at = 7;
+    int32 id = 1;
+    string first_name = 2;
+    string last_name = 3;
+    string email = 4;
+    string password = 5; // Note: Should be handled securely
+    bool verified = 6;
+    string role = 7;
+    string phone_number = 8;
+    string address = 9;
+    int64 created_at = 10; // Unix timestamp
 }
 
-// Product message
+// Product message represents a product in the system.
 message Product {
-  int32 id = 1;
-  string name = 2;
-  string description = 3;
-  string merchant = 4;
-  string category = 5;
-  string currency = 6;
-  string image = 7;
-  double price = 8;
-  int32 quantity = 9;
-  string created_at = 10;
+    int32 id = 1;
+    string name = 2;
+    string description = 3;
+    string merchant = 4;
+    string category = 5;
+    string currency = 6;
+    string image = 7;
+    double price = 8;
+    int32 quantity = 9;
+    int64 created_at = 10; // Unix timestamp
 }
 
-// Order message
+// Order message represents an order made by a user.
 message Order {
-  int32 id = 1;
-  int32 user_id = 2;
-  double total = 3;
-  string status = 4;
-  string address = 5;
-  string created_at = 6;
+    int32 id = 1;
+    int32 user_id = 2;
+    double total = 3;
+    string status = 4;
+    string address = 5;
+    int64 created_at = 6; // Unix timestamp
 }
 
-// OrderItem message
+// OrderItem message represents an item in an order.
 message OrderItem {
-  int32 id = 1;
-  int32 order_id = 2;
-  int32 product_id = 3;
-  int32 quantity = 4;
-  double price = 5;
-  string created_at = 6;
+    int32 id = 1;
+    int32 order_id = 2;
+    int32 product_id = 3;
+    int32 quantity = 4;
+    double price = 5;
 }
 
-// Payload messages
-message RegisterUserPayload {
-  string first_name = 1;
-  string last_name = 2;
-  string email = 3;
-  string password = 4;
-}
-
-message LoginUserPayload {
-  string email = 1;
-  string password = 2;
-}
-
-message CartCheckoutPayload {
-  repeated CartItem items = 1;
-}
-
+// CartItem message represents an item in the shopping cart.
 message CartItem {
-  int32 product_id = 1;
-  int32 quantity = 2;
+    int32 product_id = 1;
+    int32 quantity = 2;
+}
+
+// RegisterUserPayload message for user registration.
+message RegisterUserPayload {
+    string first_name = 1;
+    string last_name = 2;
+    string email = 3;
+    string password = 4;
+    string phone_number = 5;
+    string address = 6;
+}
+
+// ResponseRegister message for registration responses.
+message ResponseRegister {
+    string url = 1;
+    string error = 2;
+}
+
+// LoginUserPayload message for user login.
+message LoginUserPayload {
+    string email = 1;
+    string password = 2;
+}
+
+// ResponseLogin message for login responses.
+message ResponseLogin {
+    string access_token = 1;
+    string secret_token = 2;
+    string error = 3;
+}
+
+// CartCheckoutPayload message for cart checkout.
+message CartCheckoutPayload {
+    repeated CartItem items = 1;
+}
+
+// ResponseCart message for cart responses.
+message ResponseCart {
+    double total = 1;
+    int32 order_id = 2;
+    repeated Product items = 3;
+}
+
+// InvoicePayload message for invoice creation.
+message InvoicePayload {
+    int64 duration = 1; // Duration in seconds
+    Payment payment = 2;
+    Customer customer = 3;
+    repeated Product items = 4;
+}
+
+message Payment {
+    string type = 1;
+    double amount = 2;
+}
+
+message Customer {
+    string name = 1;
+    string email = 2;
+    string phone_number = 3;
+}
+
+// InvoiceResponse message for invoice responses.
+message InvoiceResponse {
+    int32 id = 1;
+    int64 created_at = 2; // Unix timestamp
+    int64 updated_at = 3; // Unix timestamp
+    int64 deleted_at = 4; // Unix timestamp
+    string number = 5;
+    int64 invoice_date = 6; // Unix timestamp
+    int64 due_date = 7; // Unix timestamp
+    int64 paid_at = 8; // Unix timestamp
+    repeated InvoiceItem items = 9;
+    PaymentDetails payment = 10;
+    BillingAddress billing_address = 11;
+    string success_redirect_url = 12;
+    string failure_redirect_url = 13;
+    string title = 14;
+    string state = 15;
+    TransactionValues transaction_values = 16;
+}
+
+message InvoiceItem {
+    int32 id = 1;
+    int64 created_at = 2; // Unix timestamp
+    int64 updated_at = 3; // Unix timestamp
+    int64 deleted_at = 4; // Unix timestamp
+    string name = 5;
+    string description = 6;
+    string category = 7;
+    string merchant = 8;
+    string currency = 9;
+    double unit_price = 10;
+    double quantity = 11;
+}
+
+message PaymentDetails {
+    int32 id = 1;
+    int64 created_at = 2; // Unix timestamp
+    int64 updated_at = 3; // Unix timestamp
+    int64 deleted_at = 4; // Unix timestamp
+    string gateway = 5;
+    string type = 6;
+    string token = 7;
+    string redirect_url = 8;
+    string transaction_id = 9;
+}
+
+message BillingAddress {
+    int32 id = 1;
+    int64 created_at = 2; // Unix timestamp
+    int64 updated_at = 3; // Unix timestamp
+    int64 deleted_at = 4; // Unix timestamp
+    string name = 5;
+    string email = 6;
+    string phone_number = 7;
+}
+
+message TransactionValues {
+    string currency = 1;
+    double total = 2;          // Total amount
+    double sub_total = 3;      // Subtotal amount
+    double discount = 4;       // Discount amount
+    double tax = 5;            // Tax amount
+    double admin_fee = 6;      // Admin fee amount
+    double installment_fee = 7; // Installment fee amount
+}
+
+// Token message represents a token in the system.
+message Token {
+    int32 id = 1;
+    string token = 2;
+    int64 created_at = 3; // Unix timestamp
+}
+
+// RefreshTokenPayload message for refreshing tokens.
+message RefreshTokenPayload {
+    string access_token = 1;
+    string secret_token = 2;
+}
+
+// ResponseRefreshToken message for token refresh responses.
+message ResponseRefreshToken {
+    string access_token = 1;
+}
+
+// TokenStore message for handling token operations.
+message TokenStore {
+    repeated Token blacklisted_tokens = 1;
 }

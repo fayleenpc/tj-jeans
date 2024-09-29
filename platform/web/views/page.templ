@@ -4,7 +4,7 @@ import "github.com/fayleenpc/tj-jeans/platform/web/views/components"
 
 var try_script_page = templ.NewOnceHandle()
 
-templ Page(nav bool, username string) {
+templ Page(nav bool, username string, role string) {
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -27,11 +27,12 @@ templ Page(nav bool, username string) {
                         <li><a href="/" class="link" id="home" onclick="addActiveClass(document.getElementById('home'), 'active')">Beranda</a></li>
                         <li><a href="/products" class="link" onclick="addActiveClass(document.getElementById('products'), 'active')" id="products">Produk</a></li>
                         <li><a href="/gallery" class="link" id="gallery" onclick="addActiveClass(document.getElementById('gallery'), 'active')">Galeri</a></li>
-                        @components.UserNameDisplay(username)
+                        @components.DisplayMenuLogin(username)
+                        @components.DisplayMenuAdmin(role)
                     </ul>
                 </div>
                 <div class="nav-button" id="nav-button">
-                        @components.UserNameLogout(username)
+                        @components.DisplayButtonLogout(username)
                 </div>
                 <div class="nav-menu-btn">
                     <i class="bx bx-menu" onclick="myMenuFunction()"></i>

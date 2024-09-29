@@ -8,7 +8,7 @@ package components
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-func UserNameDisplay(username string) templ.Component {
+func DisplayMenuLogin(username string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -29,23 +29,19 @@ func UserNameDisplay(username string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		if username != "" {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li><a href=\"/service\" class=\"link\" id=\"service\" onclick=\"addActiveClass(document.getElementById(&#39;service&#39;), &#39;active&#39;)\" disabled>Layanan</a></li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
 		if username == "" {
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li><a href=\"/service\" class=\"link\" id=\"service\" onclick=\"addActiveClass(document.getElementById(&#39;service&#39;), &#39;active&#39;)\">Layanan</a></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
+		if username != "" {
+		}
 		return templ_7745c5c3_Err
 	})
 }
 
-func UserNameLogout(username string) templ.Component {
+func DisplayMenuAdmin(role string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -66,27 +62,60 @@ func UserNameLogout(username string) templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
+		if role == "admin" {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li><a href=\"/admin\" class=\"link\" id=\"service\" onclick=\"addActiveClass(document.getElementById(&#39;service&#39;), &#39;active&#39;)\">Admin</a></li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		if role != "admin" {
+		}
+		return templ_7745c5c3_Err
+	})
+}
+
+func DisplayButtonLogout(username string) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var3 == nil {
+			templ_7745c5c3_Var3 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
 		if username != "" {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<button class=\"btn\" onclick=\"Logout()\" id=\"logout\">Selamat datang, ")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<button class=\"btn white-btn\" hx-post=\"/service/logout\" hx-swap=\"none\" id=\"logout\">Logout ( ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var3 string
-			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(username)
+			var templ_7745c5c3_Var4 string
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(username)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `platform/web/views/components/user_tile.templ`, Line: 14, Col: 85}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `platform/web/views/components/user_tile.templ`, Line: 23, Col: 110}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("!</button> ")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" ) </button> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if username == "" {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<button class=\"btn\" onclick=\"Logout()\" id=\"logout\" disabled>Selamat datang!</button>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<button class=\"btn white-btn\">Selamat datang!</button>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

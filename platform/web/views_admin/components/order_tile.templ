@@ -1,0 +1,18 @@
+package components
+
+import "github.com/fayleenpc/tj-jeans/internal/types"
+import "fmt"
+
+
+templ Order_Tile(order types.Order) {
+    <tr>
+        <td>{ fmt.Sprintf("%v", order.ID ) }</td>
+        
+        <td>{ fmt.Sprintf("%v", order.UserID) }</td>
+        <td>IDR { fmt.Sprintf("%v", order.Total) }</td>
+        <td>{ order.Address }</td>
+        <td><span class="status delivered">{ order.Status }</span></td>
+        <td>{ fmt.Sprintf("%v", order.CreatedAt) }</td>
+        
+    </tr>
+}
