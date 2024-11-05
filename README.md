@@ -1,4 +1,4 @@
-Complete Rest API, Rest Json, gRPC implementation + full stack.
+Complete Rest API, Rest Json, gRPC implementation + full stack. ( for public purposes )
 
 The rest is open source code use wisely
 
