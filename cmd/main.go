@@ -3,11 +3,16 @@ package main
 import (
 	"database/sql"
 	"log"
+	"net/http"
 
 	"github.com/fayleenpc/tj-jeans/cmd/api"
+	"github.com/fayleenpc/tj-jeans/cmd/api_proto"
 	"github.com/fayleenpc/tj-jeans/internal/config"
 	"github.com/fayleenpc/tj-jeans/internal/db"
+	"github.com/fayleenpc/tj-jeans/platform/web"
+	"github.com/fayleenpc/tj-jeans/services/tokenize"
 	"github.com/go-sql-driver/mysql"
+	"github.com/gorilla/mux"
 )
 
 // @title           Swagger Example API
@@ -30,7 +35,12 @@ import (
 // @externalDocs.description  OpenAPI
 // @externalDocs.url          https://swagger.io/resources/open-api/
 
+var (
+	grpcAddr = ":2000"
+)
+
 func main() {
+
 	db, err := db.NewMySQLStorage(mysql.Config{
 		User:                 config.Envs.DBUser,
 		Passwd:               config.Envs.DBPassword,
@@ -44,10 +54,41 @@ func main() {
 		log.Fatal(err)
 	}
 	initStorage(db)
-	server := api.NewAPIServer(":8080", db)
-	if err := server.Run(); err != nil {
-		log.Fatal(err)
-	}
+
+	// gRPC API
+	// grpcApiServer := api_grpc.NewApiServerGRPC(":8082", grpc.NewServer(), db)
+
+	// go grpcApiServer.Run()
+
+	// REST PROTOBUF API
+	restApiProtobuf := api_proto.NewApiProtobufServer(":8082", db)
+
+	go restApiProtobuf.Run()
+
+	// REST API
+	restApiServer := api.NewAPIServer(":8081", db)
+
+	go restApiServer.Run()
+
+	startWeb(db)
+}
+
+func startWeb(db *sql.DB) {
+	tokenStore := tokenize.NewStore(db)
+	router := mux.NewRouter()
+
+	// serve files in static folder
+	router.PathPrefix("/platform/web/static/").Handler(http.StripPrefix("/platform/web/static/", http.FileServer(http.Dir("platform/web/static"))))
+	router.PathPrefix("/platform/web/static/images/").Handler(http.StripPrefix("/platform/web/static/images/", http.FileServer(http.Dir("platform/web/static/images"))))
+
+	// servefiles in static_admin folder
+	router.PathPrefix("/platform/web/static_admin/").Handler(http.StripPrefix("/platform/web/static_admin/", http.FileServer(http.Dir("platform/web/static_admin"))))
+	router.PathPrefix("/platform/web/static_admin/images/").Handler(http.StripPrefix("/platform/web/static_admin/images/", http.FileServer(http.Dir("platform/web/static_admin/images"))))
+
+	// web
+	web := web.NewHandler(tokenStore)
+	web.RegisterRoutes(router)
+	log.Fatal(http.ListenAndServe(":8080", router))
 }
 
 func initStorage(db *sql.DB) {

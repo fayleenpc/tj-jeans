@@ -21,7 +21,7 @@ migration-down:
 
 gen:
 	@protoc \
-	--proto_path=internal "internal/types_grpc/types_grpc.proto" \
-	--go_out=services/common/types_grpc --go_opt=paths=source_relative \
-	--go-grpc_out=services/common/types_grpc
+	--proto_path=internal "internal/types_grpc/types.proto" \
+	--go_out=services/common/ --go_opt=paths=source_relative \
+	--go-grpc_out=services/common/
 	--go-grpc_opt=paths=source_relative

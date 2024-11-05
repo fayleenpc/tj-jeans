@@ -10,10 +10,15 @@ import (
 
 	"github.com/fayleenpc/tj-jeans/internal/auth"
 	"github.com/fayleenpc/tj-jeans/internal/config"
+	"github.com/fayleenpc/tj-jeans/internal/loadbalancer"
 	"github.com/fayleenpc/tj-jeans/internal/session"
 	"github.com/fayleenpc/tj-jeans/internal/types"
 	"github.com/fayleenpc/tj-jeans/internal/utils"
 	"github.com/gorilla/mux"
+)
+
+var (
+	lb = loadbalancer.NewLoadBalancer()
 )
 
 func logout(w http.ResponseWriter, r *http.Request, callback func()) {
@@ -33,6 +38,7 @@ func login(w http.ResponseWriter, r *http.Request, callback func(status int, res
 		utils.WriteError(w, http.StatusInternalServerError, err)
 		return
 	}
+
 	resBody, status, err := utils.CraftJSON("POST", config.Envs.PublicHost+":"+config.Envs.Port+"/api/v1/login", m, r)
 	if err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)
@@ -127,7 +133,9 @@ func createProducts(w http.ResponseWriter, r *http.Request, callback func(status
 		utils.WriteError(w, http.StatusInternalServerError, err)
 	}
 
-	resBody, status, err := utils.CraftJSON("POST", config.Envs.PublicHost+":"+config.Envs.Port+"/api/v1/products", m, r)
+	// resBody, status, err := utils.CraftJSON("POST", config.Envs.PublicHost+":"+config.Envs.Port+"/api/v1/products", m, r)
+	// do loadbalancer for frequent products
+	resBody, status, err := utils.CraftJSON("POST", lb.GetBackend()+"/api/v1/products", m, r)
 	if err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)
 		return

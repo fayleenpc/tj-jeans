@@ -1,8 +1,17 @@
 package types
 
 import (
+	"context"
 	"time"
+
+	pb "github.com/fayleenpc/tj-jeans/services/common/types_grpc"
 )
+
+type FinanceReport struct {
+	OrderCount     int `json:"order_count"`
+	TotalItemsSold int `json:"total_items_sold"`
+	TotalRevenue   int `json:"total_revenue"`
+}
 
 type UserStore interface {
 	GetUsers() ([]User, error)
@@ -16,6 +25,18 @@ type UserStore interface {
 	CreateUser(User) error
 }
 
+type UserService interface {
+	GetUsers(context.Context, *pb.GetUsersRequest) (*pb.GetUsersResponse, error)
+	GetUsersByIDs(context.Context, *pb.GetUsersByIDsRequest) (*pb.GetUsersByIDsResponse, error)
+	UpdateVerifiedUserByEmail(context.Context, *pb.UpdateVerifiedUserByEmailRequest) error
+	GetUserByEmail(context.Context, *pb.GetUserByEmailRequest) (*pb.GetUserByEmailResponse, error)
+	GetUserByID(context.Context, *pb.GetUserByIDRequest) (*pb.GetUserByIDResponse, error)
+	DeleteUserByID(context.Context, *pb.DeleteUserByIDRequest) (*pb.DeleteUserByIDResponse, error)
+	DeleteUser(context.Context, *pb.DeleteUserRequest) (*pb.DeleteUserResponse, error)
+	UpdateUser(context.Context, *pb.UpdateUserRequest) (*pb.UpdateUserResponse, error)
+	CreateUser(context.Context, *pb.CreateUserRequest) (*pb.CreateUserResponse, error)
+}
+
 type ProductStore interface {
 	GetProducts() ([]Product, error)
 	GetProductsByIDs([]int) ([]Product, error)
@@ -24,6 +45,16 @@ type ProductStore interface {
 	DeleteProductByID(int) (int64, error)
 	DeleteProduct(Product) (int64, error)
 	UpdateProduct(Product) (int64, error)
+}
+
+type ProductService interface {
+	GetProducts(context.Context, *pb.GetProductsRequest) (*pb.GetProductsResponse, error)
+	GetProductsByIDs(context.Context, *pb.GetProductsByIDsRequest) (*pb.GetProductsByIDsResponse, error)
+	GetProductByID(context.Context, *pb.GetProductByIDRequest) (*pb.GetProductByIDResponse, error)
+	CreateProduct(context.Context, *pb.CreateProductRequest) (*pb.CreateProductResponse, error)
+	DeleteProductByID(context.Context, *pb.DeleteProductByIDRequest) (*pb.DeleteProductByIDResponse, error)
+	DeleteProduct(context.Context, *pb.DeleteProductRequest) (*pb.DeleteProductResponse, error)
+	UpdateProduct(context.Context, *pb.UpdateProductRequest) (*pb.UpdateProductResponse, error)
 }
 
 type OrderStore interface {
@@ -41,6 +72,35 @@ type OrderStore interface {
 	DeleteOrderItemByID(int) (int64, error)
 	DeleteOrderItem(OrderItem) (int64, error)
 	UpdateOrderItem(OrderItem) (int64, error)
+}
+
+type OrderService interface {
+	GetOrders(context.Context, *pb.GetOrdersRequest) (*pb.GetOrdersResponse, error)
+	GetOrdersByIDs(context.Context, *pb.GetOrdersByIDsRequest) (*pb.GetOrdersByIDsResponse, error)
+	GetOrderByID(context.Context, *pb.GetOrderByIDRequest) (*pb.GetOrderByIDResponse, error)
+	CreateOrder(context.Context, *pb.CreateOrderRequest) (*pb.CreateOrderResponse, error)
+	DeleteOrderByID(context.Context, *pb.DeleteOrderByIDRequest) (*pb.DeleteOrderByIDResponse, error)
+	DeleteOrder(context.Context, *pb.DeleteOrderRequest) (*pb.DeleteOrderResponse, error)
+	UpdateOrder(context.Context, *pb.UpdateOrderRequest) (*pb.UpdateOrderResponse, error)
+	// GetOrderItems() ([]OrderItem, error)
+	// GetOrderItemsByIDs([]int) ([]OrderItem, error)
+	// GetOrderItemsByID(int) (*OrderItem, error)
+	// CreateOrderItem(OrderItem) error
+	// DeleteOrderItemByID(int) (int64, error)
+	// DeleteOrderItem(OrderItem) (int64, error)
+	// UpdateOrderItem(OrderItem) (int64, error)
+}
+
+type TokenStore interface {
+	GetBlacklistedTokens() ([]Token, error)
+	CreateBlacklistTokens(Token) (*Token, error)
+	GetBlacklistTokenByString(string) (*Token, error)
+}
+
+type TokenService interface {
+	GetBlacklistedTokens(context.Context, *pb.GetBlacklistedTokensRequest) (*pb.GetBlacklistedTokensResponse, error)
+	CreateBlacklistTokens(context.Context, *pb.CreateBlacklistTokenRequest) (*pb.CreateBlacklistTokenResponse, error)
+	GetBlacklistTokenByString(context.Context, *pb.GetBlacklistTokenByStringRequest) (*pb.GetBlacklistTokenByStringResponse, error)
 }
 
 type CartItem struct {
@@ -215,10 +275,4 @@ type RefreshTokenPayload struct {
 
 type ResponseRefreshToken struct {
 	AccessToken string `json:"access_token"`
-}
-
-type TokenStore interface {
-	GetBlacklistedTokens() ([]Token, error)
-	CreateBlacklistTokens(Token) error
-	GetBlacklistTokenByString(string) (Token, error)
 }

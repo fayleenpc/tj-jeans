@@ -45,7 +45,7 @@ func Products(username string, products []types.Product) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"recentCustomers\"><div class=\"cardHeader\"><h2>Products</h2></div><table>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"recentCustomers\"><div class=\"row\"><div class=\"col-12\"><button class=\"btn btn-primary newUser\" data-bs-toggle=\"modal\" data-bs-target=\"#userForm\">New User <i class=\"bi bi-people\"></i></button></div></div><div class=\"cardHeader\"><h2>Products</h2></div><table>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

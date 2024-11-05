@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"log"
@@ -10,13 +11,14 @@ import (
 	"github.com/fayleenpc/tj-jeans/internal/config"
 	"github.com/fayleenpc/tj-jeans/internal/monitoring"
 	swagger_docs "github.com/fayleenpc/tj-jeans/internal/swaggerdocs"
-	"github.com/fayleenpc/tj-jeans/platform/web"
 	"github.com/fayleenpc/tj-jeans/services/cart"
+	"github.com/fayleenpc/tj-jeans/services/finance"
 	"github.com/fayleenpc/tj-jeans/services/gateway/payment"
 	"github.com/fayleenpc/tj-jeans/services/order"
 	"github.com/fayleenpc/tj-jeans/services/products"
 	"github.com/fayleenpc/tj-jeans/services/tokenize"
 	"github.com/fayleenpc/tj-jeans/services/users"
+	"github.com/go-redis/redis/v8"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/opentracing/opentracing-go"
@@ -144,6 +146,19 @@ func (s *APIServer) Run() error {
 		"GET", "HEAD", "POST", "PUT", "OPTIONS",
 	})
 
+	redisStore := redis.NewClient(&redis.Options{
+		Addr:     "localhost:6379", // Redis server address
+		Password: "",               // No password set
+		DB:       0,                // Use default DB
+	})
+
+	// Test the connection
+	_, err := redisStore.Ping(context.Background()).Result()
+	if err != nil {
+		log.Fatalf("Could not connect to Redis: %v", err)
+	}
+	fmt.Println("Connected to Redis")
+
 	router := mux.NewRouter()
 
 	subrouter := router.PathPrefix("/api/v1").Subrouter()
@@ -152,15 +167,15 @@ func (s *APIServer) Run() error {
 	tokenStore := tokenize.NewStore(s.db)
 
 	usersStore := users.NewStore(s.db)
-	usersHandler := users.NewHandler(usersStore, tokenStore)
+	usersHandler := users.NewHandler(usersStore, tokenStore, redisStore)
 	usersHandler.RegisterRoutes(subrouter)
 
 	productStore := products.NewStore(s.db)
-	productHandler := products.NewHandler(productStore, usersStore, tokenStore)
+	productHandler := products.NewHandler(productStore, usersStore, tokenStore, redisStore)
 	productHandler.RegisterRoutes(subrouter)
 
 	orderStore := order.NewStore(s.db)
-	cartHandler := cart.NewHandler(orderStore, productStore, usersStore, tokenStore)
+	cartHandler := cart.NewHandler(orderStore, productStore, usersStore, tokenStore, redisStore)
 	cartHandler.RegisterRoutes(subrouter)
 
 	// payment gateway
@@ -168,30 +183,29 @@ func (s *APIServer) Run() error {
 	paymentGateway.RegisterRoutes()
 
 	// tokenize
-	tokenizeHandler := tokenize.NewHandler(tokenStore, usersStore)
+	tokenizeHandler := tokenize.NewHandler(tokenStore, usersStore, redisStore)
 	tokenizeHandler.RegisterRoutes(subrouter)
 
 	// swagger
 	// swag := swagger.NewHandler()
 	// swag.RegisterRoutes()
 
-	// serve files in static folder
-	router.PathPrefix("/platform/web/static/").Handler(http.StripPrefix("/platform/web/static/", http.FileServer(http.Dir("platform/web/static"))))
-	router.PathPrefix("/platform/web/static/images/").Handler(http.StripPrefix("/platform/web/static/images/", http.FileServer(http.Dir("platform/web/static/images"))))
-
-	// servefiles in static_admin folder
-	router.PathPrefix("/platform/web/static_admin/").Handler(http.StripPrefix("/platform/web/static_admin/", http.FileServer(http.Dir("platform/web/static_admin"))))
-	router.PathPrefix("/platform/web/static_admin/images/").Handler(http.StripPrefix("/platform/web/static_admin/images/", http.FileServer(http.Dir("platform/web/static_admin/images"))))
-
 	// swagger
 	swagDocs := swagger_docs.NewHandler()
 	swagDocs.RegisterRoutes(subrouter)
 
-	// web
-	web := web.NewHandler(tokenStore)
-	web.RegisterRoutes(router)
+	// mux := http.NewServeMux()
+	// handler := NewHandler(c)
+	// handler.registerRoutes(mux)
+	// log.Println("Starting HTTP server at ", httpAddr)
+	// if err := http.ListenAndServe(httpAddr, mux); err != nil {
+	// 	log.Fatal("Failed to start http server")
+	// }
 
-	log.Println("Listening on ", s.addr)
+	financeHandler := finance.NewHandler(orderStore)
+	financeHandler.RegisterRoutes(subrouter)
+
+	log.Printf("REST + Json running at : %v\n", s.addr)
 	// log.Println("ENVS : ")
 	// log.Println(config.Envs)
 

@@ -1,6 +1,7 @@
 package web
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -11,6 +12,7 @@ import (
 	"github.com/fayleenpc/tj-jeans/internal/utils"
 	"github.com/fayleenpc/tj-jeans/platform/web/views"
 	"github.com/fayleenpc/tj-jeans/platform/web/views_admin"
+	views_admin_components "github.com/fayleenpc/tj-jeans/platform/web/views_admin/components"
 	"github.com/gorilla/mux"
 )
 
@@ -31,11 +33,12 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 
 	router.HandleFunc("/", auth.WithCookie(h.showHomePage, h.store)).Methods("GET")
 	router.HandleFunc("/products", auth.WithCookie(h.showProductsPage, h.store)).Methods("GET")
+	router.HandleFunc("/products/get", h.handleGetProducts).Methods("GET")
 	router.HandleFunc("/gallery", auth.WithCookie(h.showGalleryPage, h.store)).Methods("GET")
 
 	router.HandleFunc("/service", auth.WithCookie(h.showServicePage, h.store)).Methods("GET")
 	router.HandleFunc("/service/register", auth.WithCookie(h.handleRegisterService, h.store)).Methods("POST")
-	router.HandleFunc("/service/login", auth.WithCookie(h.handleLoginService, h.store)).Methods("POST")
+	router.HandleFunc("/service/login", h.handleLoginService).Methods("POST")
 	router.HandleFunc("/service/logout", auth.WithCookie(h.handleLogoutService, h.store)).Methods("POST")
 	router.HandleFunc("/service/refresh", auth.WithCookie(h.handleRefreshService, h.store)).Methods("POST")
 
@@ -64,6 +67,15 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("/admin/products/{product_id}", auth.WithCookie(h.handleGetProductByID, h.store)).Methods("GET")
 	router.HandleFunc("/admin/products/{product_id}/update", auth.WithCookie(h.handleUpdateProductByID, h.store)).Methods("PATCH")
 	router.HandleFunc("/admin/products/{product_id}/delete", auth.WithCookie(h.handleDeleteProductByID, h.store)).Methods("DELETE")
+}
+
+func (h *Handler) handleGetProducts(w http.ResponseWriter, r *http.Request) {
+	products, err := getProducts(r)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+	utils.WriteJSON(w, http.StatusOK, products)
 }
 
 func messageWhatsapp(r *http.Request, req types.InvoicePayload, responseInvoice types.InvoiceResponse) string {
@@ -188,8 +200,18 @@ func (h *Handler) showServicePage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) showAdminPage(w http.ResponseWriter, r *http.Request) {
+	var report types.FinanceReport
+
 	if auth.BridgeAdmin(w, r) {
-		views_admin.Home(auth.GetUserNameFromSession(r.Header.Get("Authorization"))).Render(r.Context(), w)
+		response, code, err := utils.CraftJSON("GET", "http://localhost:8081/api/v1/finance", nil, r)
+		if err != nil {
+			log.Fatal(err)
+		}
+		if err := json.Unmarshal(response, &report); err != nil {
+			log.Fatal(err)
+		}
+		log.Printf("response from [code=%v] [finance-report] %+v\n", code, &report)
+		views_admin.Home(auth.GetUserNameFromSession(r.Header.Get("Authorization")), report).Render(r.Context(), w)
 	} else {
 		views_admin.Error().Render(r.Context(), w)
 	}
@@ -397,6 +419,8 @@ func (h *Handler) handleGetProductByID(w http.ResponseWriter, r *http.Request) {
 			log.Fatal(err)
 		}
 		log.Println(product)
+		views_admin_components.Product_Details(*product).Render(r.Context(), w)
+		// views_admin.Products(auth.GetUserNameFromSession(r.Header.Get("Authorization")), []types.Product{*product}).Render(r.Context(), w)
 	} else {
 		views_admin.Error().Render(r.Context(), w)
 	}

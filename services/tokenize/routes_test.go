@@ -15,7 +15,7 @@ import (
 func TestRegisterUsersServiceHandler(t *testing.T) {
 	userStore := &mockUserStore{}
 	store := &mockTokenStore{}
-	handler := NewHandler(store, userStore)
+	handler := NewHandler(store, userStore, nil)
 
 	t.Run("should fail if the user payload is invalid", func(t *testing.T) {
 		payload := types.RegisterUserPayload{
@@ -68,7 +68,7 @@ func TestRegisterUsersServiceHandler(t *testing.T) {
 func TestLoginUsersServiceHandler(t *testing.T) {
 	userStore := &mockUserStore{}
 	store := &mockTokenStore{}
-	handler := NewHandler(store, userStore)
+	handler := NewHandler(store, userStore, nil)
 
 	t.Run("should fail if the user payload is invalid", func(t *testing.T) {
 		payload := types.RegisterUserPayload{
@@ -117,7 +117,7 @@ func TestLoginUsersServiceHandler(t *testing.T) {
 func TestTokenizeServiceHandler(t *testing.T) {
 	userStore := &mockUserStore{}
 	store := &mockTokenStore{}
-	handler := NewHandler(store, userStore)
+	handler := NewHandler(store, userStore, nil)
 
 	t.Run("should fail if the token payload is invalid", func(t *testing.T) {
 		payload := types.Token{
@@ -165,11 +165,11 @@ type mockTokenStore struct{}
 
 func (m *mockTokenStore) GetBlacklistedTokens() ([]types.Token, error) { return nil, nil }
 
-func (m *mockTokenStore) CreateBlacklistTokens(types.Token) error {
-	return nil
+func (m *mockTokenStore) CreateBlacklistTokens(types.Token) (*types.Token, error) {
+	return nil, nil
 }
-func (m *mockTokenStore) GetBlacklistTokenByString(string) (types.Token, error) {
-	return types.Token{}, nil
+func (m *mockTokenStore) GetBlacklistTokenByString(string) (*types.Token, error) {
+	return nil, nil
 }
 
 type mockUserStore struct{}

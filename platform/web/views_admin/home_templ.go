@@ -8,7 +8,10 @@ package views_admin
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-func Home(username string) templ.Component {
+import "github.com/fayleenpc/tj-jeans/internal/types"
+import "fmt"
+
+func Home(username string, financeReport types.FinanceReport) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -41,7 +44,46 @@ func Home(username string) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!-- ========================= Main ==================== --> <div class=\"main\"><div class=\"topbar\"><div class=\"toggle\"><ion-icon name=\"menu-outline\"></ion-icon></div><!-- <div class=\"search\">\r\n                    <label>\r\n                        <input type=\"text\" placeholder=\"Search here\">\r\n                        <ion-icon name=\"search-outline\"></ion-icon>\r\n                    </label>\r\n                </div> --><div class=\"user\"><img src=\"/platform/web/static_admin/images/customer01.jpg\" alt=\"\"></div></div><!-- ======================= Cards ================== --><div class=\"cardBox\"><div class=\"card\"><div><div class=\"numbers\">1,504</div><div class=\"cardName\">Daily Views</div></div><div class=\"iconBx\"><ion-icon name=\"eye-outline\"></ion-icon></div></div><div class=\"card\"><div><div class=\"numbers\">80</div><div class=\"cardName\">Total Orders Bought</div></div><div class=\"iconBx\"><ion-icon name=\"cart-outline\"></ion-icon></div></div><div class=\"card\"><div><div class=\"numbers\">284</div><div class=\"cardName\">Total Products Bought</div></div><div class=\"iconBx\"><ion-icon name=\"chatbubbles-outline\"></ion-icon></div></div><div class=\"card\"><div><div class=\"numbers\">IDR 7,842</div><div class=\"cardName\">Total Revenue (Xendit/Midtrans)</div></div><div class=\"iconBx\"><ion-icon name=\"cash-outline\"></ion-icon></div></div></div></div>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!-- ========================= Main ==================== --> <div class=\"main\"><div class=\"topbar\"><div class=\"toggle\"><ion-icon name=\"menu-outline\"></ion-icon></div><!-- <div class=\"search\">\r\n                    <label>\r\n                        <input type=\"text\" placeholder=\"Search here\">\r\n                        <ion-icon name=\"search-outline\"></ion-icon>\r\n                    </label>\r\n                </div> --><div class=\"user\"><img src=\"/platform/web/static_admin/images/customer01.jpg\" alt=\"\"></div></div><!-- ======================= Cards ================== --><div class=\"cardBox\"><div class=\"card\"><div><div class=\"numbers\">1,504</div><div class=\"cardName\">Daily Views</div></div><div class=\"iconBx\"><ion-icon name=\"eye-outline\"></ion-icon></div></div><div class=\"card\"><div><div class=\"numbers\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var3 string
+			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%v", financeReport.OrderCount))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `platform/web/views_admin/home.templ`, Line: 42, Col: 90}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"cardName\">Total Orders Bought</div></div><div class=\"iconBx\"><ion-icon name=\"cart-outline\"></ion-icon></div></div><div class=\"card\"><div><div class=\"numbers\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var4 string
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%v", financeReport.TotalItemsSold))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `platform/web/views_admin/home.templ`, Line: 53, Col: 94}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"cardName\">Total Products Bought</div></div><div class=\"iconBx\"><ion-icon name=\"chatbubbles-outline\"></ion-icon></div></div><div class=\"card\"><div><div class=\"numbers\">IDR ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var5 string
+			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%v", financeReport.TotalRevenue))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `platform/web/views_admin/home.templ`, Line: 64, Col: 96}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"cardName\">Total Revenue (Xendit/Midtrans)</div></div><div class=\"iconBx\"><ion-icon name=\"cash-outline\"></ion-icon></div></div></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

@@ -13,6 +13,8 @@ import (
 type Config struct {
 	PublicHost             string
 	Port                   string
+	PortProto              string
+	PortGRPC               string
 	DBUser                 string
 	DBPassword             string
 	DBAddress              string
@@ -31,7 +33,9 @@ func initConfig() Config {
 	// init_vault()
 	return Config{
 		PublicHost:             getEnv("PUBLIC_HOST", "http://localhost"),
-		Port:                   getEnv("PORT", "8080"),
+		Port:                   getEnv("PORT", "8081"),
+		PortProto:              getEnv("PORT_PROTO", "8082"),
+		PortGRPC:               getEnv("PORT_GRPC", "8083"),
 		DBUser:                 getEnv("DB_USER", "root"),
 		DBPassword:             getEnv("DB_PASSWORD", ""),
 		DBAddress:              fmt.Sprintf("%s:%s", getEnv("DB_HOST", "127.0.0.1"), getEnv("DB_PORT", "3306")),

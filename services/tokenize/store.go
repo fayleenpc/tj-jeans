@@ -32,23 +32,23 @@ func (s *Store) GetBlacklistedTokens() ([]types.Token, error) {
 	return tokens, nil
 }
 
-func (s *Store) CreateBlacklistTokens(t types.Token) error {
+func (s *Store) CreateBlacklistTokens(t types.Token) (*types.Token, error) {
 	_, err := s.db.Exec(
 		"INSERT INTO blacklisted_tokens (token) VALUES (?)", t.Token,
 	)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return &t, nil
 }
 
-func (s *Store) GetBlacklistTokenByString(t string) (types.Token, error) {
+func (s *Store) GetBlacklistTokenByString(t string) (*types.Token, error) {
 	// Check if token is blacklisted
 	var dbToken types.Token
 
 	err := s.db.QueryRow("SELECT token FROM blacklisted_tokens WHERE token = ?", t).Scan(&dbToken.Token)
 
-	return dbToken, err
+	return &dbToken, err
 }
 
 func scanRowIntoBlacklistedTokens(rows *sql.Rows) (*types.Token, error) {

@@ -216,7 +216,7 @@ templ Products(products []types.Product, username string, role string) {
 
         const initApp = () => {
             // get data product
-            fetch('/api/v1/products')
+            fetch('/products/get')
             .then(response => response.json())
             .then(data => {
                 // console.log(data)

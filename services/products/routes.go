@@ -9,6 +9,7 @@ import (
 	"github.com/fayleenpc/tj-jeans/internal/ratelimiter"
 	"github.com/fayleenpc/tj-jeans/internal/types"
 	"github.com/fayleenpc/tj-jeans/internal/utils"
+	"github.com/go-redis/redis/v8"
 	"github.com/gorilla/mux"
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
@@ -18,10 +19,11 @@ type Handler struct {
 	store      types.ProductStore
 	userStore  types.UserStore
 	tokenStore types.TokenStore
+	redisStore *redis.Client
 }
 
-func NewHandler(store types.ProductStore, userStore types.UserStore, tokenStore types.TokenStore) *Handler {
-	return &Handler{store: store, userStore: userStore, tokenStore: tokenStore}
+func NewHandler(store types.ProductStore, userStore types.UserStore, tokenStore types.TokenStore, redisStore *redis.Client) *Handler {
+	return &Handler{store: store, userStore: userStore, tokenStore: tokenStore, redisStore: redisStore}
 }
 
 func (h *Handler) RegisterRoutes(router *mux.Router) {
@@ -274,7 +276,7 @@ func (h *Handler) handleDeleteProduct(w http.ResponseWriter, r *http.Request) {
 		}
 
 		payload.ID = int(id)
-		utils.WriteJSON(w, http.StatusOK, map[string]any{"deleted_id": id, "deleted_product": payload})
+		utils.WriteJSON(w, http.StatusOK, map[string]any{"deleted_id": id, "deleted_product": &payload})
 	} else {
 		utils.WriteError(w, http.StatusForbidden, fmt.Errorf("permission denied"))
 	}

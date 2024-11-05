@@ -30,7 +30,7 @@ func CraftJSON(method string, url string, m []byte, r *http.Request) ([]byte, in
 	req.Header.Set("Authorization-X", r.Header.Get("Authorization-X"))
 
 	defer req.Body.Close()
-
+	log.Printf("who's url [%v]\n", url)
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
 

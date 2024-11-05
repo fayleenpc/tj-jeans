@@ -13,6 +13,7 @@ import (
 	"github.com/fayleenpc/tj-jeans/internal/types"
 	"github.com/fayleenpc/tj-jeans/internal/utils"
 	"github.com/go-playground/validator"
+	"github.com/go-redis/redis/v8"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/gorilla/mux"
 	"github.com/opentracing/opentracing-go"
@@ -20,22 +21,22 @@ import (
 )
 
 type Handler struct {
-	store     types.TokenStore
-	userStore types.UserStore
+	store      types.TokenStore
+	userStore  types.UserStore
+	redisStore *redis.Client
 }
 
-func NewHandler(store types.TokenStore, userStore types.UserStore) *Handler {
-	return &Handler{store: store, userStore: userStore}
+func NewHandler(store types.TokenStore, userStore types.UserStore, redisStore *redis.Client) *Handler {
+	return &Handler{store: store, userStore: userStore, redisStore: redisStore}
 }
 
 func (h *Handler) RegisterRoutes(router *mux.Router) {
-	router.HandleFunc("/refresh", auth.WithJWTAuth(ratelimiter.WithRateLimiter(h.handleRefresh), h.userStore, h.store)).Methods("POST")
+	router.HandleFunc("/refresh", ratelimiter.WithRateLimiter(h.handleRefresh)).Methods("POST")
 	router.HandleFunc("/logout", auth.WithJWTAuth(ratelimiter.WithRateLimiter(h.handleLogout), h.userStore, h.store)).Methods("POST")
 	router.HandleFunc("/blacklisted_tokens", auth.WithJWTAuth(ratelimiter.WithRateLimiter(h.handleGetBlacklistedTokens), h.userStore, h.store)).Methods("GET")
 	router.HandleFunc("/verify", ratelimiter.WithRateLimiter(h.handleVerify)).Methods("GET")
 	router.HandleFunc("/login", ratelimiter.WithRateLimiter(h.handleLogin)).Methods("POST")
 	router.HandleFunc("/register", ratelimiter.WithRateLimiter(h.handleRegister)).Methods("POST")
-
 }
 
 func validateRefreshToken(token string) (*jwt.Token, error) {
@@ -95,7 +96,9 @@ func (h *Handler) handleRefresh(w http.ResponseWriter, r *http.Request) {
 	span.SetTag(string(ext.Component), "http")
 	span.SetTag("http.method", r.Method)
 	var payload types.RefreshTokenPayload
-
+	if auth.GetUserIDFromContext(r.Context()) != 0 {
+		log.Println("got user for refreshing token")
+	}
 	if r.Header.Get("Authorization") != "" && r.Header.Get("Authorization-X") != "" {
 		payload.AccessToken = r.Header.Get("Authorization")
 		payload.SecretToken = r.Header.Get("Authorization-X")
@@ -115,7 +118,7 @@ func (h *Handler) handleRefresh(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Blacklist the token
-	if err := h.store.CreateBlacklistTokens(types.Token{Token: payload.AccessToken}); err != nil {
+	if _, err := h.store.CreateBlacklistTokens(types.Token{Token: payload.AccessToken}); err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)
 		return
 	}
@@ -186,12 +189,12 @@ func (h *Handler) handleLogout(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Blacklist the token
-	if err := h.store.CreateBlacklistTokens(types.Token{Token: payload.SecretToken}); err != nil {
+	if _, err := h.store.CreateBlacklistTokens(types.Token{Token: payload.SecretToken}); err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)
 		return
 	}
 	// Blacklist the token
-	if err := h.store.CreateBlacklistTokens(types.Token{Token: payload.AccessToken}); err != nil {
+	if _, err := h.store.CreateBlacklistTokens(types.Token{Token: payload.AccessToken}); err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)
 		return
 	}

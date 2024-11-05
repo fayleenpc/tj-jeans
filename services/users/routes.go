@@ -2,6 +2,7 @@ package users
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -9,6 +10,7 @@ import (
 	"github.com/fayleenpc/tj-jeans/internal/ratelimiter"
 	"github.com/fayleenpc/tj-jeans/internal/types"
 	"github.com/fayleenpc/tj-jeans/internal/utils"
+	"github.com/go-redis/redis/v8"
 	"github.com/gorilla/mux"
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
@@ -17,10 +19,11 @@ import (
 type Handler struct {
 	store      types.UserStore
 	tokenStore types.TokenStore
+	redisStore *redis.Client
 }
 
-func NewHandler(store types.UserStore, tokenStore types.TokenStore) *Handler {
-	return &Handler{store: store, tokenStore: tokenStore}
+func NewHandler(store types.UserStore, tokenStore types.TokenStore, redisStore *redis.Client) *Handler {
+	return &Handler{store: store, tokenStore: tokenStore, redisStore: redisStore}
 }
 
 func (h *Handler) RegisterRoutes(router *mux.Router) {
@@ -37,11 +40,20 @@ func (h *Handler) handleGetUsers(w http.ResponseWriter, r *http.Request) {
 	span.SetTag(string(ext.Component), "http")
 	span.SetTag("http.method", r.Method)
 	userRole := auth.GetUserRoleFromContext(r.Context())
+
 	if userRole == "admin" {
+		redisString := h.redisStore.Get(r.Context(), "handleGetUsers")
+		if result, err := redisString.Result(); err == nil {
+			utils.WriteJSON(w, http.StatusOK, result)
+		}
 		users, err := h.store.GetUsers()
 		if err != nil {
 			utils.WriteError(w, http.StatusInternalServerError, err)
 			return
+		}
+		redisStatus := h.redisStore.Set(r.Context(), "handleGetUsers", users, 3600)
+		if redisStatus.Err() != nil {
+			log.Fatalf("Could not set key: %v", err)
 		}
 
 		utils.WriteJSON(w, http.StatusOK, users)

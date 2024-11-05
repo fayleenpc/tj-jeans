@@ -1,6 +1,9 @@
 package views_admin
 
-templ Home(username string) {
+import "github.com/fayleenpc/tj-jeans/internal/types"
+import "fmt"
+
+templ Home(username string, financeReport types.FinanceReport) {
     @Page(true, username) {
         <!-- ========================= Main ==================== -->
         <div class="main">
@@ -36,7 +39,7 @@ templ Home(username string) {
 
                 <div class="card">
                     <div>
-                        <div class="numbers">80</div>
+                        <div class="numbers">{ fmt.Sprintf("%v", financeReport.OrderCount) }</div>
                         <div class="cardName">Total Orders Bought</div>
                     </div>
 
@@ -47,7 +50,7 @@ templ Home(username string) {
 
                 <div class="card">
                     <div>
-                        <div class="numbers">284</div>
+                        <div class="numbers">{ fmt.Sprintf("%v", financeReport.TotalItemsSold) }</div>
                         <div class="cardName">Total Products Bought</div>
                     </div>
 
@@ -58,7 +61,7 @@ templ Home(username string) {
 
                 <div class="card">
                     <div>
-                        <div class="numbers">IDR 7,842</div>
+                        <div class="numbers">IDR { fmt.Sprintf("%v", financeReport.TotalRevenue) }</div>
                         <div class="cardName">Total Revenue (Xendit/Midtrans)</div>
                     </div>
 

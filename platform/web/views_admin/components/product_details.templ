@@ -1,0 +1,23 @@
+package components
+
+import "github.com/fayleenpc/tj-jeans/internal/types"
+import "fmt"
+
+templ Product_Details(product types.Product) {
+    <br> 
+                    <span> 
+                        { fmt.Sprintf("%v %v", product.Currency, product.Price) }
+                    </span>
+                <br>
+                    <span> { fmt.Sprintf("Category \t : \t %v", product.Category) } </span> 
+                
+                <br>
+                    <span> { fmt.Sprintf("Deskripsi \t : \t %v", product.Description) }  </span> 
+                
+                <br>
+                    <span> { fmt.Sprintf("Merchant \t : \t %v", product.Merchant) } </span> 
+                
+                <br>
+                    <span> { fmt.Sprintf("Jumlah \t : \t %v", product.Quantity) } </span>
+                <br>
+}

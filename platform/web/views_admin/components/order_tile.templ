@@ -13,6 +13,10 @@ templ Order_Tile(order types.Order) {
         <td>{ order.Address }</td>
         <td><span class="status delivered">{ order.Status }</span></td>
         <td>{ fmt.Sprintf("%v", order.CreatedAt) }</td>
-        
+        <td>
+            <button>Details</button>
+            <button>Update</button>
+            <button>Delete</button>
+        </td>
     </tr>
 }

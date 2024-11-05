@@ -11,22 +11,10 @@ templ Product_Tile(product types.Product) {
         <td>
             <h4>
                 { product.Name } 
-                <br> 
-                    <span> 
-                        { fmt.Sprintf("%v %v", product.Currency, product.Price) }
-                    </span>
                 <br>
-                    <span> { fmt.Sprintf("Category \t : \t %v", product.Category) } </span> 
-                
-                <br>
-                    <span> { fmt.Sprintf("Deskripsi \t : \t %v", product.Description) }  </span> 
-                
-                <br>
-                    <span> { fmt.Sprintf("Merchant \t : \t %v", product.Merchant) } </span> 
-                
-                <br>
-                    <span> { fmt.Sprintf("Jumlah \t : \t %v", product.Quantity) } </span> 
-                
+                    <button hx-get={ fmt.Sprintf("/admin/products/%v", product.ID) } hx-trigger="click" hx-swap="innerHTML">Details</button>
+                    <button hx-patch={ fmt.Sprintf("/admin/products/%v/update", product.ID) } hx-trigger="click" hx-swap="innerHTML">Update</button>
+                    <button hx-delete={ fmt.Sprintf("/admin/products/%v/delete", product.ID) } hx-confirm="Are you sure you want to delete this product?">Delete</button>
             </h4>
             
             

@@ -7,15 +7,22 @@ import "github.com/fayleenpc/tj-jeans/platform/web/views_admin/components"
 templ Products(username string, products []types.Product) {
     @Page(true, username) {
         <div class="recentCustomers">
-                    <div class="cardHeader">
-                        <h2>Products</h2>
-                    </div>
+            <div class="row">
+                <div class="col-12">
+                    <button class="btn btn-primary newUser" data-bs-toggle="modal" data-bs-target="#userForm">New User <i class="bi bi-people"></i></button>
+                </div>
+            </div>
+            
+            <div class="cardHeader">
+                <h2>Products</h2>
+            </div>
 
-                    <table>
-                        for _, product := range products {
-                            @components.Product_Tile(product)
-                        }   
-                    </table>
+            <table>
+                for _, product := range products {
+                    @components.Product_Tile(product)
+                }   
+            </table>
         </div>
+        
     }
 }

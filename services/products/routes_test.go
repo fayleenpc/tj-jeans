@@ -14,7 +14,7 @@ func TestProductsServiceHandler(t *testing.T) {
 	userStore := &mockUserStore{}
 	tokenStore := &mockTokenStore{}
 	store := &mockProductsStore{}
-	handler := NewHandler(store, userStore, tokenStore)
+	handler := NewHandler(store, userStore, tokenStore, nil)
 
 	t.Run("should fail handle the get product", func(t *testing.T) {
 		req, err := http.NewRequest(http.MethodGet, "/products", nil)
@@ -73,11 +73,11 @@ func (m *mockProductsStore) UpdateProduct(types.Product) (int64, error) {
 type mockTokenStore struct{}
 
 func (m *mockTokenStore) GetBlacklistedTokens() ([]types.Token, error) { return nil, nil }
-func (m *mockTokenStore) CreateBlacklistTokens(types.Token) error {
-	return nil
+func (m *mockTokenStore) CreateBlacklistTokens(types.Token) (*types.Token, error) {
+	return nil, nil
 }
-func (m *mockTokenStore) GetBlacklistTokenByString(string) (types.Token, error) {
-	return types.Token{}, nil
+func (m *mockTokenStore) GetBlacklistTokenByString(string) (*types.Token, error) {
+	return nil, nil
 }
 
 type mockUserStore struct{}

@@ -10,6 +10,7 @@ import (
 	"github.com/fayleenpc/tj-jeans/internal/types"
 	"github.com/fayleenpc/tj-jeans/internal/utils"
 	"github.com/go-playground/validator"
+	"github.com/go-redis/redis/v8"
 	"github.com/gorilla/mux"
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
@@ -20,10 +21,11 @@ type Handler struct {
 	productStore types.ProductStore
 	userStore    types.UserStore
 	tokenStore   types.TokenStore
+	redisStore   *redis.Client
 }
 
-func NewHandler(store types.OrderStore, productStore types.ProductStore, userStore types.UserStore, tokenStore types.TokenStore) *Handler {
-	return &Handler{store: store, productStore: productStore, userStore: userStore, tokenStore: tokenStore}
+func NewHandler(store types.OrderStore, productStore types.ProductStore, userStore types.UserStore, tokenStore types.TokenStore, redisStore *redis.Client) *Handler {
+	return &Handler{store: store, productStore: productStore, userStore: userStore, tokenStore: tokenStore, redisStore: redisStore}
 }
 
 func (h *Handler) RegisterRoutes(router *mux.Router) {

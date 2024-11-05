@@ -44,7 +44,7 @@ func Orders(username string, orders []types.Order) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!-- ================ Order Items ================= --> <div class=\"details\"><div class=\"recentOrders\"><div class=\"cardHeader\"><h2>Orders</h2><a href=\"#\" class=\"btn\">View All</a></div><table><thead><tr><td>Order ID</td><td>User ID</td><td>Total</td><td>Address</td><td>Status</td><td>Created At</td></tr></thead> <tbody>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!-- ================ Order Items ================= --> <div class=\"details\"><div class=\"recentOrders\"><div class=\"cardHeader\"><h2>Orders</h2><a href=\"#\" class=\"btn\">View All</a></div><table><thead><tr><td>Order ID</td><td>User ID</td><td>Total</td><td>Address</td><td>Status</td><td>Created At</td><td>Action</td></tr></thead> <tbody>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

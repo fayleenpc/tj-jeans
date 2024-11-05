@@ -1,0 +1,301 @@
+syntax = "proto3";
+
+option go_package = "github.com/fayleenpc/tj-jeans/internal/types_grpc";
+
+package types;
+
+// User message
+message User {
+    int32 id = 1;
+    string first_name = 2;
+    string last_name = 3;
+    string email = 4;
+    string password = 5; // Use securely in production
+    bool verified = 6;
+    string role = 7;
+    string phone_number = 8;
+    string address = 9;
+    int64 created_at = 10; // Unix timestamp
+}
+
+// Product message
+message Product {
+    int32 id = 1;
+    string name = 2;
+    string description = 3;
+    string merchant = 4;
+    string category = 5;
+    string currency = 6;
+    string image = 7;
+    double price = 8;
+    int32 quantity = 9;
+    int64 created_at = 10; // Unix timestamp
+}
+
+// Order message
+message Order {
+    int32 id = 1;
+    int32 user_id = 2;
+    double total = 3;
+    string status = 4;
+    string address = 5;
+    int64 created_at = 6; // Unix timestamp
+}
+
+// OrderItem message
+message OrderItem {
+    int32 id = 1;
+    int32 order_id = 2;
+    int32 product_id = 3;
+    int32 quantity = 4;
+    double price = 5;
+}
+
+// Token message
+message Token {
+    int32 id = 1;
+    string token = 2;
+    int64 created_at = 3; // Unix timestamp
+}
+
+// CartItem message
+message CartItem {
+    int32 product_id = 1;
+    int32 quantity = 2;
+}
+
+// Request and Response messages for UserStore
+message GetUsersRequest {}
+message GetUsersResponse {
+    repeated User users = 1;
+}
+
+message GetUsersByIDsRequest {
+    repeated int32 ids = 1;
+}
+
+message GetUsersByIDsResponse {
+    repeated User users = 1;
+}
+
+message UpdateVerifiedUserByEmailRequest {
+    string email = 1;
+}
+
+message CreateUserRequest {
+    User user = 1;
+}
+
+message CreateUserResponse {}
+
+message GetUserByEmailRequest {
+    string email = 1;
+}
+
+message GetUserByEmailResponse {
+    User user = 1;
+}
+
+message GetUserByIDRequest {
+    int32 id = 1;
+}
+
+message GetUserByIDResponse {
+    User user = 1;
+}
+
+message DeleteUserByIDRequest {
+    int32 id = 1;
+}
+
+message DeleteUserByIDResponse {
+    int64 deleted_count = 1;
+}
+
+message DeleteUserRequest {
+    User user = 1;
+}
+
+message DeleteUserResponse {
+    int64 deleted_count = 1;
+}
+
+message UpdateUserRequest {
+    User user = 1;
+}
+
+message UpdateUserResponse {
+    int64 updated_count = 1;
+}
+
+// UserStore service
+service UserService {
+    rpc GetUsers_GRPC(GetUsersRequest) returns (GetUsersResponse);
+    rpc GetUsersByIDs_GRPC(GetUsersByIDsRequest) returns (GetUsersByIDsResponse);
+    rpc UpdateVerifiedUserByEmail_GRPC(UpdateVerifiedUserByEmailRequest) returns (CreateUserResponse);
+    rpc GetUserByEmail_GRPC(GetUserByEmailRequest) returns (GetUserByEmailResponse);
+    rpc GetUserByID_GRPC(GetUserByIDRequest) returns (GetUserByIDResponse);
+    rpc DeleteUserByID_GRPC(DeleteUserByIDRequest) returns (DeleteUserByIDResponse);
+    rpc DeleteUser_GRPC(DeleteUserRequest) returns (DeleteUserResponse);
+    rpc UpdateUser_GRPC(UpdateUserRequest) returns (UpdateUserResponse);
+    rpc CreateUser_GRPC(CreateUserRequest) returns (CreateUserResponse);
+}
+
+// Request and Response messages for ProductStore
+message GetProductsRequest {}
+message GetProductsResponse {
+    repeated Product products = 1;
+}
+
+message GetProductsByIDsRequest {
+    repeated int32 ids = 1;
+}
+
+message GetProductsByIDsResponse {
+    repeated Product products = 1;
+}
+
+message GetProductByIDRequest {
+    int32 id = 1;
+}
+
+message GetProductByIDResponse {
+    Product product = 1;
+}
+
+message CreateProductRequest {
+    Product product = 1;
+}
+
+message CreateProductResponse {
+    int64 id = 1;
+}
+
+message DeleteProductByIDRequest {
+    int32 id = 1;
+}
+
+message DeleteProductByIDResponse {
+    int64 deleted_count = 1;
+}
+
+message DeleteProductRequest {
+    Product product = 1;
+}
+
+message DeleteProductResponse {
+    int64 deleted_count = 1;
+}
+
+message UpdateProductRequest {
+    Product product = 1;
+}
+
+message UpdateProductResponse {
+    int64 updated_count = 1;
+}
+
+// ProductStore service
+service ProductService {
+    rpc GetProducts_GRPC(GetProductsRequest) returns (GetProductsResponse);
+    rpc GetProductsByIDs_GRPC(GetProductsByIDsRequest) returns (GetProductsByIDsResponse);
+    rpc GetProductByID_GRPC(GetProductByIDRequest) returns (GetProductByIDResponse);
+    rpc CreateProduct_GRPC(CreateProductRequest) returns (CreateProductResponse);
+    rpc DeleteProductByID_GRPC(DeleteProductByIDRequest) returns (DeleteProductByIDResponse);
+    rpc DeleteProduct_GRPC(DeleteProductRequest) returns (DeleteProductResponse);
+    rpc UpdateProduct_GRPC(UpdateProductRequest) returns (UpdateProductResponse);
+}
+
+// Request and Response messages for OrderStore
+message GetOrdersRequest {}
+message GetOrdersResponse {
+    repeated Order orders = 1;
+}
+
+message GetOrdersByIDsRequest {
+    repeated int32 ids = 1;
+}
+
+message GetOrdersByIDsResponse {
+    repeated Order orders = 1;
+}
+
+message GetOrderByIDRequest {
+    int32 id = 1;
+}
+
+message GetOrderByIDResponse {
+    Order order = 1;
+}
+
+message CreateOrderRequest {
+    Order order = 1;
+}
+
+message CreateOrderResponse {
+    int64 id = 1;
+}
+
+message DeleteOrderByIDRequest {
+    int32 id = 1;
+}
+
+message DeleteOrderByIDResponse {
+    int64 deleted_count = 1;
+}
+
+message DeleteOrderRequest {
+    Order order = 1;
+}
+
+message DeleteOrderResponse {
+    int64 deleted_count = 1;
+}
+
+message UpdateOrderRequest {
+    Order order = 1;
+}
+
+message UpdateOrderResponse {
+    int64 updated_count = 1;
+}
+
+// OrderStore service
+service OrderService {
+    rpc GetOrders_GRPC(GetOrdersRequest) returns (GetOrdersResponse);
+    rpc GetOrdersByIDs_GRPC(GetOrdersByIDsRequest) returns (GetOrdersByIDsResponse);
+    rpc GetOrderByID_GRPC(GetOrderByIDRequest) returns (GetOrderByIDResponse);
+    rpc CreateOrder_GRPC(CreateOrderRequest) returns (CreateOrderResponse);
+    rpc DeleteOrderByID_GRPC(DeleteOrderByIDRequest) returns (DeleteOrderByIDResponse);
+    rpc DeleteOrder_GRPC(DeleteOrderRequest) returns (DeleteOrderResponse);
+    rpc UpdateOrder_GRPC(UpdateOrderRequest) returns (UpdateOrderResponse);
+}
+
+// TokenStore service
+message GetBlacklistedTokensRequest {}
+message GetBlacklistedTokensResponse {
+    repeated Token tokens = 1;
+}
+
+message CreateBlacklistTokenRequest {
+    Token token = 1;
+}
+
+message CreateBlacklistTokenResponse {}
+
+message GetBlacklistTokenByStringRequest {
+    string token = 1;
+}
+
+message GetBlacklistTokenByStringResponse {
+    Token token = 1;
+}
+
+// TokenStore service
+service TokenService {
+    rpc GetBlacklistedTokens_GRPC(GetBlacklistedTokensRequest) returns (GetBlacklistedTokensResponse);
+    rpc CreateBlacklistToken_GRPC(CreateBlacklistTokenRequest) returns (CreateBlacklistTokenResponse);
+    rpc GetBlacklistTokenByString_GRPC(GetBlacklistTokenByStringRequest) returns (GetBlacklistTokenByStringResponse);
+}
+
+
