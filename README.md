@@ -10,6 +10,10 @@ JWT Refresh, Access, Secret Token Concepts
 
 Load Balancing whenever accessing the truth API must be in 3 ways for faster response including Rest JSON, Rest Protobuf or gRPC
 
+To Do
+
+Swagger isn't fully implemented
+
 
 
 
