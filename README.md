@@ -14,7 +14,9 @@ To Do
 
 Swagger isn't fully implemented
 
+Dockerfile/compose need changes
 
+Environtment Variables should kept secret
 
 
 
